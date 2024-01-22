@@ -80,9 +80,16 @@ The python script can be ran in the following way. `python make.cnv_somatic_pair
 
 The Dockerfile for this portion is contained in the folder `/MAF/`. Build this docker container to run the SNV and the CNV portion of the workflow. Once the docker image is built, activate the conda environment to properly run the workflows: `conda activate gatk`.
 
-After running 
+1. INVCF (Final Processed VCF)
+2. OUTMAF (Final Output MAF file)
+   
+In the docker container, to convert a processed VCF to MAF, run the following command: `perl /opt/mskcc-vcf2maf-754d68a/vcf2maf.pl --input-vcf $INVCF --output-maf $OUTMAF --ncbi-build GRCh38 --ref-fasta /opt/references/GRCh38.fa --vep-path /opt/miniconda/envs/gatk/bin`
 
 ## 3. Feature Generation
+
+The Dockerfile for this portion is contained in the folder `/feature_gen/`. Additionally in the folder is the feature generation script, at `/feature_gen/feature_gen.R`. 
+
+Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT `
 
 ## 4. Model
 
