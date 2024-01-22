@@ -2,47 +2,69 @@
 
 There are 4 different steps required to run the Tumor Type/Tissue of Origin Classifier. Each one is contained in a separate folder with a separate Dockerfile that contains everything necessary to run the particular script. The SNV and CNV calls are created using the GATK best practices workflows. 
 
-#NEED TO WRITE THIS SUCH THAT U RUN THE SCRIPTS TO PREPARE WDLs and THEN RUN ALL THE WDLs? dockers are only needed to actually run the WDL?
-
-
 ## 1. SNV/CNV
 *All files used in the SNV step can be found in the SNV/CNV folder*
 
-### 1a. Pre-Alignment
+### 1a. Build the Docker
+
+The Dockerfile is contained in the `/SNV_CNV/` folder. Build this docker container to run the SNV and the CNV portion of the workflow. Once the docker image is built, activate the conda environment to properly run the workflows: `conda activate gatk`.
+
+### 1b. Pre-Alignment
 The pre-alignment step converts either an aligned BAM or a paired-end FASTQ file and converts it to an unmapped BAM to be aligned. 
 
 1. SAMPNAME (Sample Name)
 2. SRCBAM (path to the input BAM file, e.g. a tumor or a normal WXS BAM downloaded from TCGA)
-3. FASTQ or BAM (Input 1 if the file is a FASTQ, 2 if the file is a BAM)
+3. OUTDIR (Output Directory)
 
-If the file provided is a FASTQ file, it can be converted to a BAM file using the `paired-fastq-to-unmapped-bam.wdl` workflow. The JSON to run this particular WDL can be created using the python script `make.paired-fastq-to-unmapped-bam.input.json.py`.
+If the file provided is a FASTQ file, it can be converted to a BAM file using the `paired-fastq-to-unmapped-bam.wdl` workflow. The JSON to run this particular WDL can be created using the python script `make.paired-fastq-to-unmapped-bam.input.json.py`. The WDL can be found at this link: https://raw.githubusercontent.com/gatk-workflows/seq-format-conversion/master/paired-fastq-to-unmapped-bam.wdl
 
-The python script can be ran in the following way. `python `
+The python script can be ran in the following way. `python make.paired-fastq-to-unmapped-bam.input.json.py $SRCBAM $OUTDIR/$SAMPNMAME $OUTDIR/$SAMPNAME.bam-to-unmapped-bams.inputs.json`
 
-If the file provided is an aligned BAM file, the BAM file needs to be unmapped so it can be realigned using the appropriate files. This can be done using the `bam-to-unmapped-bams.wdl`. The JSON to run this particular WDL can be created using the python script `make.bam-to-unmapped-bams.input.json.py`.
+If the file provided is an aligned BAM file, the BAM file needs to be unmapped so it can be realigned using the appropriate files. This can be done using the `bam-to-unmapped-bams.wdl`. The JSON to run this particular WDL can be created using the python script `make.bam-to-unmapped-bams.input.json.py`. THe WDL can be found at this link: https://raw.githubusercontent.com/gatk-workflows/seq-format-conversion/master/bam-to-unmapped-bams.wdl
+
+The python script can be ran in the following way. `python make.bam-to-unmapped-bams.input.json.py $SRCBAM $OUTDIR/$SAMPNMAME $OUTDIR/$SAMPNAME.bam-to-unmapped-bams.inputs.json`
 
 If the provided file is an unmapped BAM file this step can be skipped. 
 
-### 1b. Alignment
+### 1c. Alignment
 The alignment step is responsible for aligning the BAM/FASTQ file to the reference genome. The reference available in the docker container is GRCh38. The alignment step requires X arguments.
 
 1. SAMPNAME (Sample Name)
 2. SRCBAM (path to the input BAM file, e.g. a tumor or a normal WXS BAM downloaded from TCGA)
+3. OUTDIR (Output Directory)
+4. BAMLIST (Path to list of BAM files)
 
 To align the BAM, first generate the JSON for the WDL using the python script `make.processing-for-variant-discovery-gatk4.hg38.wgs.input.json.py`. Then, the WDL, `processing-for-variant-discovery-gatk4.wdl` can be run using the inputs. 
 
-### 1c. SNV Calling
-This step []
+The python script can be ran in the following way. `python make.processing-for-variant-discovery-gatk4.hg38.wgs.input.json.py $SRCBAM $BAMLIST $OUTDIR/$SAMPNAME.processing-for-variant-discovery-gatk4.hg38.wgs.inputs.json`
 
+### 1d. SNV Calling
+This step calls the variants. If a normal and a tumor are both present follow the tumor-normal SNV calling. If a normal is not present, then follow the steps for tumor-only calling. 
+
+#### Tumor-Normal
 1. SAMPNAME (sample name)
 2. TUMORBAM (aligned tumor BAM from Step 1b)
 3. TUMORBAMIND (aligned tumor index BAI from Step 1b)
 4. NORMALBAM (aligned normal BAM from Step 1b)
 5. NORMALBAMIND (aligned normal index BAI from Step 1b)
+6. OUTDIR (Output Directory)
 
 To generate SNV the calls, first run the python script `make.mutect2.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `mutect2.wdl` can be run using the JSON.
 
-### 1d. CNV Calling
+The python script can be ran in the following way. `python make.mutect2.input.json.py $TUMORBAM $TUMORBAMIND $NORMALBAM $NORMALBAMIND $OUTDIR/$SAMPNAME.mutect2.inputs.json`
+
+#### Tumor-only
+1. SAMPNAME (sample name)
+2. TUMORBAM (aligned tumor BAM from Step 1b)
+3. TUMORBAMIND (aligned tumor index BAI from Step 1b)
+
+To generate SNV the calls, first run the python script `make.mutect2.tumor_only.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `mutect2.wdl` can be run using the JSON.
+
+The python script can be ran in the following way. `python make.mutect2.tumor_only.input.json.py $TUMORBAM $TUMORBAMIND $OUTDIR/$SAMPNAME.mutect2.tumor_only.inputs.json`
+
+The WDL for the tumor-normal and tumor-only are the same, and can be found here: https://raw.githubusercontent.com/broadinstitute/gatk/master/scripts/mutect2_wdl/mutect2.wdl
+
+### 1e. CNV Calling
 
 1. SAMPNAME (sample name)
 2. TUMORBAM (aligned tumor BAM from Step 1b)
@@ -52,7 +74,13 @@ To generate SNV the calls, first run the python script `make.mutect2.input.json.
 
 To generate CNV calls, first run the python script `make.cnv_somatic_pair_workflow.hg38.input.json.py` to create the JSON necessayr for the WDL run. Then the WDL, `cnv_somatic_pair_workflow.wdl` can be run using the JSON.
 
+The python script can be ran in the following way. `python make.cnv_somatic_pair_workflow.hg38.input.json.py $SRCBAM $ `
+
 ## 2. MAF Conversion
+
+The Dockerfile for this portion is contained in the folder `/MAF/`. Build this docker container to run the SNV and the CNV portion of the workflow. Once the docker image is built, activate the conda environment to properly run the workflows: `conda activate gatk`.
+
+After running 
 
 ## 3. Feature Generation
 
