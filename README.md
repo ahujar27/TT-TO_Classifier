@@ -56,6 +56,7 @@ To generate SNV the calls, first run the python script `make.mutect2.input.json.
 The python script can be ran in the following way. `python make.mutect2.input.json.py $TUMORBAM $TUMORBAMIND $NORMALBAM $NORMALBAMIND $OUTDIR/$SAMPNAME.mutect2.inputs.json`
 
 #### Tumor-only
+
 1. SAMPNAME (sample name)
 2. TUMORBAM (aligned tumor BAM from Step 1b)
 3. TUMORBAMIND (aligned tumor index BAI from Step 1b)
@@ -66,17 +67,31 @@ The python script can be ran in the following way. `python make.mutect2.tumor_on
 
 The WDL for the tumor-normal and tumor-only are the same, and can be found here: https://raw.githubusercontent.com/broadinstitute/gatk/master/scripts/mutect2_wdl/mutect2.wdl
 
-### 1e. CNV Calling
+### 1e. CNV Panel of Normals Generation
+
+1. NORMALBAMLIST (List of normal bams to generate the panel of normals)
+2. OUTFILE (The name of the output JSON file)
+
+To generate CNV calls, a panel of normals must first be generated. To generate this, first run the python script `make.cnv_somatic_panel_workflow.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `cnv_somatic_panel_workflow.wdl` can be run using the JSON.
+
+The python script can be ran in the following way. `python make.cnv_somatic_panel_workflow.input.json.py $NORMALBAMLIST $OUTFILE`
+
+The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/raw/master/cnv_somatic_panel_workflow.wdl
+
+### 1f. CNV Calling
 
 1. SAMPNAME (sample name)
 2. TUMORBAM (aligned tumor BAM from Step 1b)
 3. TUMORBAMIND (aligned tumor index BAI from Step 1b)
 4. NORMALBAM (aligned normal BAM from Step 1b)
 5. NORMALBAMIND (aligned normal index BAI from Step 1b)
+6. OUTFILE (The name of the output JSON file) 
 
-To generate CNV calls, first run the python script `make.cnv_somatic_pair_workflow.hg38.input.json.py` to create the JSON necessayr for the WDL run. Then the WDL, `cnv_somatic_pair_workflow.wdl` can be run using the JSON.
+Once the panel of normals is generated, the python script `make.cnv_somatic_pair_workflow.hg38.input.json.py` was ran to create the JSON necessary for the WDL run. Then the WDL, `cnv_somatic_pair_workflow.wdl` can be run using the JSON.
 
-The python script can be ran in the following way. `python make.cnv_somatic_pair_workflow.hg38.input.json.py $SRCBAM $ `
+The python script can be ran in the following way: `python make.cnv_somatic_pair_workflow.hg38.input.json.py $TUMORBAM $TUMORBAMIND $NORMALBAM $NORMALBAMIND $OUTFILE`
+
+The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/raw/master/cnv_somatic_pair_workflow.wdl
 
 ## 2. MAF Conversion
 
@@ -94,7 +109,7 @@ The Dockerfile for this portion is contained in the folder `/feature_gen/`. Addi
 1. INDIR (Directory containing all SNV/CNV calls)
 2. SAMPNAMES (List of sample names from previous steps) 
 
-Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT $INDIR $SAMPNAMES`
+Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES`
 
 ## 4. Model
 
