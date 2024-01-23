@@ -38,6 +38,8 @@ To align the BAM, first generate the JSON for the WDL using the python script `m
 
 The python script can be ran in the following way. `python make.processing-for-variant-discovery-gatk4.hg38.wgs.input.json.py $SRCBAM $BAMLIST $OUTDIR/$SAMPNAME.processing-for-variant-discovery-gatk4.hg38.wgs.inputs.json`
 
+The WDL for this particular step can be found at: https://raw.githubusercontent.com/gatk-workflows/gatk4-data-processing/master/processing-for-variant-discovery-gatk4.wdl
+
 ### 1d. SNV Calling
 This step calls the variants. If a normal and a tumor are both present follow the tumor-normal SNV calling. If a normal is not present, then follow the steps for tumor-only calling. 
 
