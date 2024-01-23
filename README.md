@@ -91,7 +91,10 @@ In the docker container, to convert a processed VCF to MAF, run the following co
 
 The Dockerfile for this portion is contained in the folder `/feature_gen/`. Additionally in the folder is the feature generation script, at `/feature_gen/feature_gen.R`. 
 
-Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT `
+1. INDIR (Directory containing all SNV/CNV calls)
+2. SAMPNAMES (List of sample names from previous steps) 
+
+Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT $INDIR $SAMPNAMES`
 
 ## 4. Model
 
