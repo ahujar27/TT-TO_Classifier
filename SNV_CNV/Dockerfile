@@ -16,7 +16,7 @@ ADD . $WD
 
 #Updating ubuntu and installing other necessary software
 RUN apt-get update --yes \
-&& apt-get install --yes ca-certificates curl gnupg lsb-release wget build-essential make libssl-dev zlib1g-dev git python3-pip nodejs unzip rsync r-base r-base-dev \
+&& apt-get install --yes gcc python3-dev python3-setuptools ca-certificates curl gnupg lsb-release wget build-essential make libssl-dev zlib1g-dev git python3-pip nodejs unzip rsync r-base r-base-dev \
 && apt-get clean all
 
 # Add source to install docker via apt-get
@@ -31,7 +31,7 @@ RUN echo \
 
 # Install docker
 RUN apt-get update --yes \
-&& apt-get install --yes docker-ce-cli
+&& apt-get install --yes docker-ce-cli 
 
 RUN mkdir references
 
@@ -62,71 +62,76 @@ RUN gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assemb
 RUN gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz . \
 && gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi .
 
+RUN gsutil cp gs://gatk-test-data/mutect2/Homo_sapiens_assembly38.index_bundle .  
+
 # WORKDIR /opt/
 
-RUN apt-get update \
-&& apt-get install -y autoconf automake libtool pkg-config g++ make libboost-dev
+# RUN apt-get update \
+# && apt-get install -y autoconf automake libtool pkg-config g++ make libboost-dev
 
-# RUN git clone https://gitlab.com/german.tischler/libmaus2
+# # RUN git clone https://gitlab.com/german.tischler/libmaus2
 
-# WORKDIR /opt/libmaus2
+# # WORKDIR /opt/libmaus2
 
-# RUN libtoolize \
-# && aclocal \
-# && autoreconf -i -f \
-# && ./configure \
-# && make \
-# && make install
+# # RUN libtoolize \
+# # && aclocal \
+# # && autoreconf -i -f \
+# # && ./configure \
+# # && make \
+# # && make install
 
-# WORKDIR /opt
+# # WORKDIR /opt
 
-# RUN git clone https://gitlab.com/german.tischler/biobambam2.git
+# # RUN git clone https://gitlab.com/german.tischler/biobambam2.git
 
-# WORKDIR /opt/biobambam2
+# # WORKDIR /opt/biobambam2
 
-# RUN autoreconf -i -f \
-# && ./configure --with-libmaus2=/usr/local --prefix=/opt/biobambam2 \
-# && make \
-# && make install \
-# && ldconfig
+# # RUN autoreconf -i -f \
+# # && ./configure --with-libmaus2=/usr/local --prefix=/opt/biobambam2 \
+# # && make \
+# # && make install \
+# # && ldconfig
 
-# WORKDIR /opt
+# # WORKDIR /opt
 
-RUN apt-get -y install libbz2-dev liblzma-dev libncurses5-dev tabix
+# RUN apt-get -y install libbz2-dev liblzma-dev libncurses5-dev tabix
 
-# RUN wget https://github.com/samtools/samtools/releases/download/1.18/samtools-1.18.tar.bz2 \
-# && tar xjvf samtools-1.18.tar.bz2 \
-# && cd samtools-1.18 \
-# && ./configure \
-# && make \
-# && make install
+# # RUN wget https://github.com/samtools/samtools/releases/download/1.18/samtools-1.18.tar.bz2 \
+# # && tar xjvf samtools-1.18.tar.bz2 \
+# # && cd samtools-1.18 \
+# # && ./configure \
+# # && make \
+# # && make install
 
-# RUN git clone https://github.com/lh3/bwa.git
+# # RUN git clone https://github.com/lh3/bwa.git
 
-# WORKDIR /opt/bwa
+# # WORKDIR /opt/bwa
 
-# RUN make
+# # RUN make
 
-# # RUN /opt/bwa/bwa index /opt/references/GRCh38.d1.vd1.fa
+# # # RUN /opt/bwa/bwa index /opt/references/GRCh38.d1.vd1.fa
 
-# WORKDIR /opt
+WORKDIR /opt
 
-# RUN apt-get install -y openjdk-17-jdk openjdk-17-jre
+RUN apt-get install -y openjdk-17-jdk openjdk-17-jre
 
-# RUN git clone https://github.com/broadinstitute/picard.git
+RUN git clone https://github.com/broadinstitute/picard.git
 
-# WORKDIR /opt/picard
+WORKDIR /opt/picard
 
-# RUN ./gradlew shadowJar
+RUN ./gradlew shadowJar
 
-# WORKDIR /opt
+WORKDIR /opt
 
 RUN wget https://github.com/broadinstitute/gatk/releases/download/4.4.0.0/gatk-4.4.0.0.zip \
 && unzip gatk-4.4.0.0.zip
 WORKDIR /opt/gatk-4.4.0.0
+
+# WORKDIR /opt
 # #Install Miniconda
-RUN cd $WD && wget https://repo.anaconda.com/miniconda/Miniconda3-py39_23.5.2-0-Linux-x86_64.sh && bash Miniconda3-latest-Linux-x86_64.sh -b -p $WD/miniconda
+RUN cd $WD && wget https://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-x86_64.sh && bash Miniconda3-4.7.12-Linux-x86_64.sh -b -p $WD/miniconda
 RUN $WD/miniconda/bin/conda init bash
-RUN $WD/miniconda/bin/conda env create -f gatkcondaenv.yml
+RUN $WD/miniconda/bin/conda update -n base -c defaults conda
+RUN $WD/miniconda/bin/conda env create -f gatkcondaenv.yml -- verbose
 
 CMD ["/bin/bash"]
