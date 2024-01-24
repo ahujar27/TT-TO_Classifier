@@ -1,6 +1,6 @@
 # TT/TO Classifier Instructions
 
-There are 4 different steps required to run the Tumor Type/Tissue of Origin Classifier. Each one is contained in a separate folder with a separate Dockerfile that contains everything necessary to run the particular script. The SNV and CNV calls are created using the GATK best practices workflows. 
+There are 4 different steps required to run the Tumor Type/Tissue of Origin Classifier. Each one is contained in a separate folder with a separate Dockerfile that contains everything necessary to run the particular script. The SNV and CNV calls are created using the GATK best practices workflows, for which documentation can be found at https://gatk.broadinstitute.org/hc/en-us/sections/360007226651-Best-Practices-Workflows
 
 ## 1. SNV/CNV
 *All files used in the SNV step can be found in the SNV/CNV folder*
@@ -112,4 +112,5 @@ The Dockerfile for this portion is contained in the folder `/feature_gen/`. Addi
 Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES`
 
 ## 4. Model
+
 
