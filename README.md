@@ -34,6 +34,8 @@ The alignment step is responsible for aligning the BAM/FASTQ file to the referen
 3. OUTDIR (Output Directory)
 4. BAMLIST (Path to list of BAM files)
 
+The format of the BAM list can be found under /example/bam_list.txt
+
 To align the BAM, first generate the JSON for the WDL using the python script `make.processing-for-variant-discovery-gatk4.hg38.wgs.input.json.py`. Then, the WDL, `processing-for-variant-discovery-gatk4.wdl` can be run using the inputs. 
 
 The python script can be ran in the following way. `python make.processing-for-variant-discovery-gatk4.hg38.wgs.input.json.py $SRCBAM $BAMLIST $OUTDIR/$SAMPNAME.processing-for-variant-discovery-gatk4.hg38.wgs.inputs.json`
