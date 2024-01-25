@@ -95,23 +95,27 @@ The python script can be ran in the following way: `python make.cnv_somatic_pair
 
 The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/raw/master/cnv_somatic_pair_workflow.wdl
 
-## 2. MAF Conversion
+## 2. GISTIC2 + MAF Conversion
 
 The Dockerfile for this portion is contained in the folder `/MAF/`. Build this docker container to run the SNV and the CNV portion of the workflow. Once the docker image is built, activate the conda environment to properly run the workflows: `conda activate gatk`.
 
 1. INVCF (Final Processed VCF)
-2. OUTMAF (Final Output MAF file)
+2. SAMPNAME (Sample Name)
+3. OUTDIR (Output Directory)
    
-In the docker container, to convert a processed VCF to MAF, run the following command: `perl /opt/mskcc-vcf2maf-754d68a/vcf2maf.pl --input-vcf $INVCF --output-maf $OUTMAF --ncbi-build GRCh38 --ref-fasta /opt/references/GRCh38.fa --vep-path /opt/miniconda/envs/gatk/bin`
+In the docker container, to convert a processed VCF to MAF, run the following command: `perl /opt/mskcc-vcf2maf-754d68a/vcf2maf.pl --input-vcf $INVCF --output-maf $OUTDIR/$SAMPNAME.maf --ncbi-build GRCh38 --ref-fasta /opt/references/GRCh38.fa --vep-path /opt/miniconda/envs/gatk/bin`
 
 ## 3. Feature Generation
 
 The Dockerfile for this portion is contained in the folder `/feature_gen/`. Additionally in the folder is the feature generation script, at `/feature_gen/feature_gen.R`. 
 
 1. INDIR (Directory containing all SNV/CNV calls)
-2. SAMPNAMES (List of sample names from previous steps) 
+2. SAMPNAMES (List of sample names from previous steps)
+3. GENEPATH (Gene List Path)
+4. BINPATH (Genome Bins Path)
+5. CNVPATH (all_thresholded.by_genes.txt Path)
 
-Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES`
+Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES $GENEPATH $BINPATH $CNVPATH`
 
 ## 4. Model
 
