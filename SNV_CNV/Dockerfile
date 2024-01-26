@@ -33,19 +33,19 @@ RUN echo \
 RUN apt-get update --yes \
 && apt-get install --yes docker-ce-cli 
 
-RUN mkdir references
+# RUN mkdir references
 
-WORKDIR /opt/references/
+# WORKDIR /opt/references/
 
-RUN wget https://api.gdc.cancer.gov/data/254f697d-310d-4d7d-a27b-27fbf767a834 -O GRCh38.d1.vd1.fa.tar.gz \
-&& tar xf GRCh38.d1.vd1.fa.tar.gz \
-&& rm GRCh38.d1.vd1.fa.tar.gz \
-&& wget https://api.gdc.cancer.gov/data/25217ec9-af07-4a17-8db9-101271ee7225 \
-&& tar xf 25217ec9-af07-4a17-8db9-101271ee7225 \
-&& rm 25217ec9-af07-4a17-8db9-101271ee7225 \
-&& wget https://api.gdc.cancer.gov/data/2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5 \
-&& tar xf 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5 \
-&& rm 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5
+# RUN wget https://api.gdc.cancer.gov/data/254f697d-310d-4d7d-a27b-27fbf767a834 -O GRCh38.d1.vd1.fa.tar.gz \
+# && tar xf GRCh38.d1.vd1.fa.tar.gz \
+# && rm GRCh38.d1.vd1.fa.tar.gz \
+# && wget https://api.gdc.cancer.gov/data/25217ec9-af07-4a17-8db9-101271ee7225 \
+# && tar xf 25217ec9-af07-4a17-8db9-101271ee7225 \
+# && rm 25217ec9-af07-4a17-8db9-101271ee7225 \
+# && wget https://api.gdc.cancer.gov/data/2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5 \
+# && tar xf 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5 \
+# && rm 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5
 
 # RUN apt-get install --yes apt-transport-https ca-certificates gnupg curl \
 #     && echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
