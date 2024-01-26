@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM bioconductor/bioconductor_docker:devel
 
 #When running this image, mount the docker socket so the workflow can launch docker containers from within this container
 #docker run -it -v /var/run/docker.sock:/var/run/docker.sock ubuntu
@@ -32,10 +32,12 @@ RUN echo \
 RUN apt-get update --yes \
 && apt-get install --yes docker-ce-cli
 
-RUN R -e "install.packages('BiocManager')"
+RUN R -e "install.packages('BiocManager',dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
-RUN R -e "BiocManager::install('maftools')"
+RUN R -e "install.packages('reshape2',dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
-RUN R -e "install.packages('tidyverse')"
+RUN R -e 'BiocManager::install(c("maftools"))'
+
+RUN R -e "install.packages('tidyverse',dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 CMD ["/bin/bash"]
