@@ -1,16 +1,25 @@
 library(maftools)
 library(ggplot2)
+library(dplyr)
+require(reshape2)
+library(tidyverse)
 
+args = commandArgs(trailingOnly=TRUE)
 
-setwd('/Volumes/jin.zhang/Active/rohil/mutation_rep/')
-fullGeneList = read.csv('fullGeneList.txt', header = F)
+indir = args[1]
+sample_list = args[2]
+geneList_path = args[3]
+gene_bins = args[4]
+cnv_info = args[5]
+
+fullGeneList = read.csv(geneList_path, header = F)
 
 somatic_table <- data.frame(matrix(ncol = 29, nrow = 0))
 
-patient_list = c('TCGA-3X-AAV9', 'TCGA-3X-AAVA', 'TCGA-3X-AAVB', 'TCGA-3X-AAVC', 'TCGA-3X-AAVE', 'TCGA-4G-AAZT', 'TCGA-W5-AA2G', 'TCGA-W5-AA2I', 'TCGA-W5-AA2O')
+patient_list = readLines(sample_list)
 
 for (patient_id in patient_list) {
-  maf_path <- sprintf("/Volumes/jin.zhang/Active/rohil/10_test/%s/%s.maf", patient_id, patient_id)
+  maf_path <- paste(indir, patient_id, "/",patient_id, ".maf", sep = '')
   tmp = read.maf(maf = maf_path)
   tmp@data <- subset(tmp@data, Hugo_Symbol %in% fullGeneList$V1)
   tmp@data <- subset(tmp@data, FILTER == "PASS")
@@ -18,6 +27,7 @@ for (patient_id in patient_list) {
   somatic_table <-rbind(somatic_table,tmp@data)
 }
 
+somatic_table <- somatic_table[somatic_table$t_alt_count>5,]
 mut_mtx = dcast(somatic_table[ ,c('Tumor_Sample_Barcode', 'Hugo_Symbol')], Tumor_Sample_Barcode ~ Hugo_Symbol, value.var="Hugo_Symbol")
 mut_mtx <- mut_mtx[!is.na(mut_mtx$Tumor_Sample_Barcode),]
 rownames(mut_mtx) <- mut_mtx$Tumor_Sample_Barcode
@@ -29,32 +39,18 @@ dim(mut_mtx)
 
 CNV_table <- data.frame(matrix(ncol = 10, nrow = 0))
 
-### concatenate all cancer type tables of CNV data 
-
-for (i in seq(nrow(paStudies)))
-{
-  studyId = as.character(paStudies[i,"studyId"])
-  
-  cnv_tmp = getDataByGenes(api=cbio,
-                           studyId = studyId,
-                           by = "hugoGeneSymbol",
-                           genes = fullGeneList$V1,
-                           molecularProfileIds = c(paste0(studyId,"_gistic"))
-  )
-  cnv_tmp = cnv_tmp[[1]]
-  colnames(CNV_table) <- colnames(cnv_tmp)
-  CNV_table<-rbind(cnv_tmp, CNV_table)
-  print(studyId)
-}
+CNV_table1 <- read.csv(cnv_info, sep = '\t')
+CNV_table1 <- CNV_table1 %>%
+  pivot_longer(cols = -(1:4), names_to = "Column", values_to = "Value")
 
 ### Generate copy number alteration matrix using gistic numbers
-cpy_mtx = dcast(CNV_table[ ,c('sampleId', 'hugoGeneSymbol', 'value')], sampleId ~ hugoGeneSymbol, value.var="value")
+cpy_mtx = dcast(CNV_table1[ ,c('Column', 'Gene.Symbol', 'Value')], Column ~ Gene.Symbol, value.var="Value")
 rownames(cpy_mtx) <- cpy_mtx$sampleId
 cpy_mtx$sampleId <- NULL
 
 ## remove rows and columns containing only 0
-#cpy_mtx<-cpy_mtx[!apply(cpy_mtx, 1, function(row) all(row == 0)),]
-#cpy_mtx<-cpy_mtx[,!apply(cpy_mtx, 2, function(col) all(col == 0))]
+cpy_mtx<-cpy_mtx[!apply(cpy_mtx, 1, function(row) all(row == 0)),]
+cpy_mtx<-cpy_mtx[,!apply(cpy_mtx, 2, function(col) all(col == 0))]
 mut_mtx<-mut_mtx[!apply(mut_mtx, 1, function(row) all(row == 0)),]
 mut_mtx<-mut_mtx[,!apply(mut_mtx, 2, function(col) all(col == 0))]
 
