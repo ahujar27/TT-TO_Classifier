@@ -5,11 +5,26 @@ There are 4 different steps required to run the Tumor Type/Tissue of Origin Clas
 ## 1. SNV/CNV
 *All files used in the SNV step can be found in the SNV/CNV folder*
 
-### 1a. Build the Docker
+### 1a. Download the References
+
+`mkdir references` and then `cd references`. 
+
+Download the references as such:
+`wget https://api.gdc.cancer.gov/data/254f697d-310d-4d7d-a27b-27fbf767a834 -O GRCh38.d1.vd1.fa.tar.gz`
+`tar xf GRCh38.d1.vd1.fa.tar.gz`
+`rm GRCh38.d1.vd1.fa.tar.gz`
+`wget https://api.gdc.cancer.gov/data/25217ec9-af07-4a17-8db9-101271ee7225`
+`tar xf 25217ec9-af07-4a17-8db9-101271ee7225`
+`rm 25217ec9-af07-4a17-8db9-101271ee7225`
+`wget https://api.gdc.cancer.gov/data/2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5`
+`tar xf 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5`
+`rm 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5`
+
+### 1b. Build the Docker
 
 The Dockerfile is contained in the `/SNV_CNV/` folder. Build this docker container to run the SNV and the CNV portion of the workflow. Once the docker image is built, activate the conda environment to properly run the workflows: `conda activate gatk`.
 
-### 1b. Pre-Alignment
+### 1c. Pre-Alignment
 The pre-alignment step converts either an aligned BAM or a paired-end FASTQ file and converts it to an unmapped BAM to be aligned. 
 
 1. SAMPNAME (Sample Name)
@@ -26,7 +41,7 @@ The python script can be ran in the following way. `python make.bam-to-unmapped-
 
 If the provided file is an unmapped BAM file this step can be skipped. 
 
-### 1c. Alignment
+### 1d. Alignment
 The alignment step is responsible for aligning the BAM/FASTQ file to the reference genome. The reference available in the docker container is GRCh38. The alignment step requires X arguments.
 
 1. SAMPNAME (Sample Name)
@@ -42,7 +57,7 @@ The python script can be ran in the following way. `python make.processing-for-v
 
 The WDL for this particular step can be found at: https://raw.githubusercontent.com/gatk-workflows/gatk4-data-processing/master/processing-for-variant-discovery-gatk4.wdl
 
-### 1d. SNV Calling
+### 1e. SNV Calling
 This step calls the variants. If a normal and a tumor are both present follow the tumor-normal SNV calling. If a normal is not present, then follow the steps for tumor-only calling. 
 
 #### Tumor-Normal
@@ -69,7 +84,7 @@ The python script can be ran in the following way. `python make.mutect2.tumor_on
 
 The WDL for the tumor-normal and tumor-only are the same, and can be found here: https://raw.githubusercontent.com/broadinstitute/gatk/master/scripts/mutect2_wdl/mutect2.wdl
 
-### 1e. CNV Panel of Normals Generation
+### 1f. CNV Panel of Normals Generation
 
 1. NORMALBAMLIST (List of normal bams to generate the panel of normals)
 2. OUTFILE (The name of the output JSON file)
@@ -80,7 +95,7 @@ The python script can be ran in the following way. `python make.cnv_somatic_pane
 
 The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/raw/master/cnv_somatic_panel_workflow.wdl
 
-### 1f. CNV Calling
+### 1g. CNV Calling
 
 1. SAMPNAME (sample name)
 2. TUMORBAM (aligned tumor BAM from Step 1b)
