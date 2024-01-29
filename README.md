@@ -114,7 +114,7 @@ The python script can be ran in the following way: `python make.cnv_somatic_pair
 
 The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/raw/master/cnv_somatic_pair_workflow.wdl
 
-## 3. GISTIC2 + MAF Conversion
+## 3. MAF Conversion
 
 The Dockerfile for this portion is contained in the folder `/MAF/`. Build this docker container to run the SNV and the CNV portion of the workflow. Once the docker image is built, activate the conda environment to properly run the workflows: `conda activate gatk`.
 
@@ -124,7 +124,22 @@ The Dockerfile for this portion is contained in the folder `/MAF/`. Build this d
    
 In the docker container, to convert a processed VCF to MAF, run the following command: `perl /opt/mskcc-vcf2maf-754d68a/vcf2maf.pl --input-vcf $INVCF --output-maf $OUTDIR/$SAMPNAME.maf --ncbi-build GRCh38 --ref-fasta /opt/references/GRCh38.fa --vep-path /opt/miniconda/envs/gatk/bin`
 
-## 4. Feature Generation
+## 4. GISTIC
+
+### 4a. GISTIC Preparation
+The Docker image for this step can be obtained by using the command `docker pull shixiangwang/gistic`. Once the image has been pulled, it can be ran using `docker run -it --rm --entrypoint bash shixiangwang/gistic`.
+
+1. INDIR (Directory containing all CNV calls)
+
+After doing so, the python script to convert the CNV calls to GISTIC format can be run as such `python gistic_prep.py $INDIR`. 
+
+### 4b. GISTIC Conversion
+
+1. INFILE (Combined CNV calls from step 4a)
+
+Once this is complete, GISTIC2 can be run using the following command: `./run_gistic -refgene /refgenefiles/hg38.UCSC.add_miR.160920.refgene.mat -cnv $INFILE`
+
+## 5. Feature Generation
 
 The Dockerfile for this portion is contained in the folder `/feature_gen/`. Additionally in the folder is the feature generation script, at `/feature_gen/feature_gen.R`. 
 
@@ -136,6 +151,6 @@ The Dockerfile for this portion is contained in the folder `/feature_gen/`. Addi
 
 Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES $GENEPATH $BINPATH $CNVPATH`
 
-## 5. Model
+## 6. Model
 
 
