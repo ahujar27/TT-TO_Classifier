@@ -2,29 +2,33 @@
 
 There are 4 different steps required to run the Tumor Type/Tissue of Origin Classifier. Each one is contained in a separate folder with a separate Dockerfile that contains everything necessary to run the particular script. The SNV and CNV calls are created using the GATK best practices workflows, for which documentation can be found at https://gatk.broadinstitute.org/hc/en-us/sections/360007226651-Best-Practices-Workflows
 
-## 1. SNV/CNV
-*All files used in the SNV step can be found in the SNV/CNV folder*
+## 1. Download the References
 
-### 1a. Download the References
+The reference files for GRCh38 are required in each individual step of the pre-processing to run the classifier. To download the references, first:
 
 `mkdir references` and then `cd references`. 
 
 Download the references as such:
-`wget https://api.gdc.cancer.gov/data/254f697d-310d-4d7d-a27b-27fbf767a834 -O GRCh38.d1.vd1.fa.tar.gz`
-`tar xf GRCh38.d1.vd1.fa.tar.gz`
-`rm GRCh38.d1.vd1.fa.tar.gz`
-`wget https://api.gdc.cancer.gov/data/25217ec9-af07-4a17-8db9-101271ee7225`
-`tar xf 25217ec9-af07-4a17-8db9-101271ee7225`
-`rm 25217ec9-af07-4a17-8db9-101271ee7225`
-`wget https://api.gdc.cancer.gov/data/2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5`
-`tar xf 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5`
-`rm 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5`
+```
+wget https://api.gdc.cancer.gov/data/254f697d-310d-4d7d-a27b-27fbf767a834 -O GRCh38.d1.vd1.fa.tar.gz
+tar xf GRCh38.d1.vd1.fa.tar.gz
+rm GRCh38.d1.vd1.fa.tar.gz
+wget https://api.gdc.cancer.gov/data/25217ec9-af07-4a17-8db9-101271ee7225
+tar xf 25217ec9-af07-4a17-8db9-101271ee7225
+rm 25217ec9-af07-4a17-8db9-101271ee7225
+wget https://api.gdc.cancer.gov/data/2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5
+tar xf 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5
+rm 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5
+```
 
-### 1b. Build the Docker
+## 2. SNV/CNV
+*All files used in the SNV step can be found in the SNV/CNV folder*
+
+### 2a. Build the Docker
 
 The Dockerfile is contained in the `/SNV_CNV/` folder. Build this docker container to run the SNV and the CNV portion of the workflow. Once the docker image is built, activate the conda environment to properly run the workflows: `conda activate gatk`.
 
-### 1c. Pre-Alignment
+### 2b. Pre-Alignment
 The pre-alignment step converts either an aligned BAM or a paired-end FASTQ file and converts it to an unmapped BAM to be aligned. 
 
 1. SAMPNAME (Sample Name)
@@ -41,7 +45,7 @@ The python script can be ran in the following way. `python make.bam-to-unmapped-
 
 If the provided file is an unmapped BAM file this step can be skipped. 
 
-### 1d. Alignment
+### 2c. Alignment
 The alignment step is responsible for aligning the BAM/FASTQ file to the reference genome. The reference available in the docker container is GRCh38. The alignment step requires X arguments.
 
 1. SAMPNAME (Sample Name)
@@ -57,15 +61,15 @@ The python script can be ran in the following way. `python make.processing-for-v
 
 The WDL for this particular step can be found at: https://raw.githubusercontent.com/gatk-workflows/gatk4-data-processing/master/processing-for-variant-discovery-gatk4.wdl
 
-### 1e. SNV Calling
+### 2d. SNV Calling
 This step calls the variants. If a normal and a tumor are both present follow the tumor-normal SNV calling. If a normal is not present, then follow the steps for tumor-only calling. 
 
 #### Tumor-Normal
 1. SAMPNAME (sample name)
-2. TUMORBAM (aligned tumor BAM from Step 1b)
-3. TUMORBAMIND (aligned tumor index BAI from Step 1b)
-4. NORMALBAM (aligned normal BAM from Step 1b)
-5. NORMALBAMIND (aligned normal index BAI from Step 1b)
+2. TUMORBAM (aligned tumor BAM from Step 2c)
+3. TUMORBAMIND (aligned tumor index BAI from Step 2c)
+4. NORMALBAM (aligned normal BAM from Step 2c)
+5. NORMALBAMIND (aligned normal index BAI from Step 2c)
 6. OUTDIR (Output Directory)
 
 To generate SNV the calls, first run the python script `make.mutect2.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `mutect2.wdl` can be run using the JSON.
@@ -75,8 +79,8 @@ The python script can be ran in the following way. `python make.mutect2.input.js
 #### Tumor-only
 
 1. SAMPNAME (sample name)
-2. TUMORBAM (aligned tumor BAM from Step 1b)
-3. TUMORBAMIND (aligned tumor index BAI from Step 1b)
+2. TUMORBAM (aligned tumor BAM from Step 2c)
+3. TUMORBAMIND (aligned tumor index BAI from Step 2c)
 
 To generate SNV the calls, first run the python script `make.mutect2.tumor_only.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `mutect2.wdl` can be run using the JSON.
 
@@ -84,7 +88,7 @@ The python script can be ran in the following way. `python make.mutect2.tumor_on
 
 The WDL for the tumor-normal and tumor-only are the same, and can be found here: https://raw.githubusercontent.com/broadinstitute/gatk/master/scripts/mutect2_wdl/mutect2.wdl
 
-### 1f. CNV Panel of Normals Generation
+### 2e. CNV Panel of Normals Generation
 
 1. NORMALBAMLIST (List of normal bams to generate the panel of normals)
 2. OUTFILE (The name of the output JSON file)
@@ -95,13 +99,13 @@ The python script can be ran in the following way. `python make.cnv_somatic_pane
 
 The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/raw/master/cnv_somatic_panel_workflow.wdl
 
-### 1g. CNV Calling
+### 2f. CNV Calling
 
 1. SAMPNAME (sample name)
-2. TUMORBAM (aligned tumor BAM from Step 1b)
-3. TUMORBAMIND (aligned tumor index BAI from Step 1b)
-4. NORMALBAM (aligned normal BAM from Step 1b)
-5. NORMALBAMIND (aligned normal index BAI from Step 1b)
+2. TUMORBAM (aligned tumor BAM from Step 2c)
+3. TUMORBAMIND (aligned tumor index BAI from Step 2c)
+4. NORMALBAM (aligned normal BAM from Step 2c)
+5. NORMALBAMIND (aligned normal index BAI from Step 2c)
 6. OUTFILE (The name of the output JSON file) 
 
 Once the panel of normals is generated, the python script `make.cnv_somatic_pair_workflow.hg38.input.json.py` was ran to create the JSON necessary for the WDL run. Then the WDL, `cnv_somatic_pair_workflow.wdl` can be run using the JSON.
@@ -110,7 +114,7 @@ The python script can be ran in the following way: `python make.cnv_somatic_pair
 
 The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/raw/master/cnv_somatic_pair_workflow.wdl
 
-## 2. GISTIC2 + MAF Conversion
+## 3. GISTIC2 + MAF Conversion
 
 The Dockerfile for this portion is contained in the folder `/MAF/`. Build this docker container to run the SNV and the CNV portion of the workflow. Once the docker image is built, activate the conda environment to properly run the workflows: `conda activate gatk`.
 
@@ -120,7 +124,7 @@ The Dockerfile for this portion is contained in the folder `/MAF/`. Build this d
    
 In the docker container, to convert a processed VCF to MAF, run the following command: `perl /opt/mskcc-vcf2maf-754d68a/vcf2maf.pl --input-vcf $INVCF --output-maf $OUTDIR/$SAMPNAME.maf --ncbi-build GRCh38 --ref-fasta /opt/references/GRCh38.fa --vep-path /opt/miniconda/envs/gatk/bin`
 
-## 3. Feature Generation
+## 4. Feature Generation
 
 The Dockerfile for this portion is contained in the folder `/feature_gen/`. Additionally in the folder is the feature generation script, at `/feature_gen/feature_gen.R`. 
 
@@ -132,6 +136,6 @@ The Dockerfile for this portion is contained in the folder `/feature_gen/`. Addi
 
 Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES $GENEPATH $BINPATH $CNVPATH`
 
-## 4. Model
+## 5. Model
 
 
