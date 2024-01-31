@@ -92,6 +92,9 @@ The WDL for the tumor-normal and tumor-only are the same, and can be found here:
 
 1. NORMALBAMLIST (List of normal bams to generate the panel of normals)
 2. OUTFILE (The name of the output JSON file)
+3. REFPATH (Path to all references)
+4. INTERVALSPATH (location of TSO500 intervals file (contained in repository))
+5. APPPATH (Path to GATK app (contained in repository))
 
 To generate CNV calls, a panel of normals must first be generated. To generate this, first run the python script `make.cnv_somatic_panel_workflow.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `cnv_somatic_panel_workflow.wdl` can be run using the JSON.
 
