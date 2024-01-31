@@ -3,6 +3,8 @@ import sys
 
 normalList = sys.argv[1]
 outName = sys.argv[2]
+refPath = sys.argv[3]
+intervalPath = sys.argv[4]
 
 with open(normalList,'r') as fin:
     normBams = fin.readlines()
@@ -14,13 +16,13 @@ jsonDict = {
     "CNVSomaticPanelWorkflow.normal_bais": normBais,
     "CNVSomaticPanelWorkflow.pon_entity_id": "tuo-cnv-pon",
   
-    "CNVSomaticPanelWorkflow.ref_fasta": "/storage1/fs1/jin.zhang/Active/tmp/rohil_docker_test/10_test/workflow_test.aligner/ref/Homo_sapiens_assembly38.fasta",
-    "CNVSomaticPanelWorkflow.ref_fasta_fai": "/storage1/fs1/jin.zhang/Active/tmp/rohil_docker_test/10_test/workflow_test.aligner/ref/Homo_sapiens_assembly38.fasta.fai",
-    "CNVSomaticPanelWorkflow.ref_fasta_dict": "/storage1/fs1/jin.zhang/Active/tmp/rohil_docker_test/10_test/workflow_test.aligner/ref/Homo_sapiens_assembly38.dict",
-    "CNVSomaticPanelWorkflow.intervals": "/storage1/fs1/jin.zhang/Active/tmp/rohil_docker_test/tso500_intervals.bed",
+    "CNVSomaticPanelWorkflow.ref_fasta": "{}/GRCh38.d1.vd1.fa".format(refPath),
+    "CNVSomaticPanelWorkflow.ref_fasta_fai": "{}/GRCh38.d1.vd1.fa.fai".format(refPath),
+    "CNVSomaticPanelWorkflow.ref_fasta_dict": "{}/GRCh38.d1.vd1.fa.dict".format(refPath),
+    "CNVSomaticPanelWorkflow.intervals": intervalPath,
 
     "CNVSomaticPanelWorkflow.gatk_docker": "broadinstitute/gatk:4.1.4.0",
-    "CNVSomaticPanelWorkflow.gatk4_jar_override": "/storage1/fs1/jin.zhang/Active/tmp/rohil_docker_test/apps/gatk-package-4.1.4.1-local.jar",
+    "CNVSomaticPanelWorkflow.gatk4_jar_override": "{}/gatk-package-4.1.4.1-local.jar".format(appPath),
     "CNVSomaticPanelWorkflow.preemptible_attempts": "3"
 }
 
