@@ -101,16 +101,19 @@ The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/ra
 
 ### 2f. CNV Calling
 
-1. SAMPNAME (sample name)
-2. TUMORBAM (aligned tumor BAM from Step 2c)
-3. TUMORBAMIND (aligned tumor index BAI from Step 2c)
-4. NORMALBAM (aligned normal BAM from Step 2c)
-5. NORMALBAMIND (aligned normal index BAI from Step 2c)
-6. OUTFILE (The name of the output JSON file) 
+1. TUMORBAM (aligned tumor BAM from Step 2c)
+2. TUMORBAMIND (aligned tumor index BAI from Step 2c)
+3. NORMALBAM (aligned normal BAM from Step 2c)
+4. NORMALBAMIND (aligned normal index BAI from Step 2c)
+5. OUTFILE (The name of the output JSON file)
+6. INTERVALSPATH (location of TSO500 intervals file (contained in repository))
+7. REFPATH (Path to all references)
+8. APPPATH (Path to GATK app (contained in repository))
+9. PONPATH (Path to PON from previous step)
 
 Once the panel of normals is generated, the python script `make.cnv_somatic_pair_workflow.hg38.input.json.py` was ran to create the JSON necessary for the WDL run. Then the WDL, `cnv_somatic_pair_workflow.wdl` can be run using the JSON.
 
-The python script can be ran in the following way: `python make.cnv_somatic_pair_workflow.hg38.input.json.py $TUMORBAM $TUMORBAMIND $NORMALBAM $NORMALBAMIND $OUTFILE`
+The python script can be ran in the following way: `python make.cnv_somatic_pair_workflow.hg38.input.json.py $TUMORBAM $TUMORBAMIND $NORMALBAM $NORMALBAMIND $OUTFILE $INTERVALSPATH $REFPATH $APPPATH $PONPATH`
 
 The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/raw/master/cnv_somatic_pair_workflow.wdl
 
