@@ -5,6 +5,7 @@ normalList = sys.argv[1]
 outName = sys.argv[2]
 refPath = sys.argv[3]
 intervalPath = sys.argv[4]
+appPath = sys.argv[5]
 
 with open(normalList,'r') as fin:
     normBams = fin.readlines()
