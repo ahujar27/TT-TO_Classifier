@@ -6,10 +6,10 @@ tumorBamInd = sys.argv[2]
 normalBam = sys.argv[3]
 normalBamInd = sys.argv[4]
 outName = sys.argv[5]
-
-appPath = '/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/apps'
-intervalsPath = '/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/tso500_intervals.bed'
-refPath = '/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref'
+intervalsPath = sys.argv[6]
+refPath = sys.argv[7]
+appPath = sys.argv[8]
+ponPath = sys.argv[9]
 
 jsonDict = {
   "CNVSomaticPairWorkflow.tumor_bam": tumorBam,
@@ -17,11 +17,11 @@ jsonDict = {
   "CNVSomaticPairWorkflow.normal_bam": normalBam,
   "CNVSomaticPairWorkflow.normal_bam_idx": normalBamInd,
   
-  "CNVSomaticPairWorkflow.ref_fasta": "{}/Homo_sapiens_assembly38.fasta".format(refPath),
-  "CNVSomaticPairWorkflow.ref_fasta_fai": "{}/Homo_sapiens_assembly38.fasta.fai".format(refPath),
-  "CNVSomaticPairWorkflow.ref_fasta_dict": "{}/Homo_sapiens_assembly38.dict".format(refPath),
-  "CNVSomaticPairWorkflow.common_sites": "{}/cnv/snp151Common.bed".format(refPath),
-  "CNVSomaticPairWorkflow.read_count_pon": "{}/cnv/tuo-cnv-pon.pon.hdf5".format(refPath), 
+  "CNVSomaticPairWorkflow.ref_fasta": "{}/GRCh38.d1.vd1.fa".format(refPath),
+  "CNVSomaticPairWorkflow.ref_fasta_fai": "{}/GRCh38.d1.vd1.fa.fai".format(refPath),
+  "CNVSomaticPairWorkflow.ref_fasta_dict": "{}/GRCh38.d1.vd1.fa.dict".format(refPath),
+  "CNVSomaticPairWorkflow.common_sites": "gs://gatk-test-data/cnv/somatic/common_snps.interval_list",
+  "CNVSomaticPairWorkflow.read_count_pon": ponPath, 
   "CNVSomaticPairWorkflow.intervals": intervalsPath,
 
   "CNVSomaticPairWorkflow.gatk_docker": "broadinstitute/gatk:4.1.4.0",
