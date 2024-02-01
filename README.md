@@ -94,11 +94,10 @@ The WDL for the tumor-normal and tumor-only are the same, and can be found here:
 2. OUTFILE (The name of the output JSON file)
 3. REFPATH (Path to all references)
 4. INTERVALSPATH (location of TSO500 intervals file (contained in repository))
-5. APPPATH (Path to GATK app (contained in repository))
 
 To generate CNV calls, a panel of normals must first be generated. To generate this, first run the python script `make.cnv_somatic_panel_workflow.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `cnv_somatic_panel_workflow.wdl` can be run using the JSON.
 
-The python script can be ran in the following way. `python make.cnv_somatic_panel_workflow.input.json.py $NORMALBAMLIST $OUTFILE`
+The python script can be ran in the following way. `python make.cnv_somatic_panel_workflow.input.json.py $NORMALBAMLIST $OUTFILE $REFPATH $INTERVALSPATH`
 
 The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/raw/master/cnv_somatic_panel_workflow.wdl
 
@@ -111,12 +110,11 @@ The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/ra
 5. OUTFILE (The name of the output JSON file)
 6. INTERVALSPATH (location of TSO500 intervals file (contained in repository))
 7. REFPATH (Path to all references)
-8. APPPATH (Path to GATK app (contained in repository))
-9. PONPATH (Path to PON from previous step)
+8. PONPATH (Path to PON from previous step)
 
 Once the panel of normals is generated, the python script `make.cnv_somatic_pair_workflow.hg38.input.json.py` was ran to create the JSON necessary for the WDL run. Then the WDL, `cnv_somatic_pair_workflow.wdl` can be run using the JSON.
 
-The python script can be ran in the following way: `python make.cnv_somatic_pair_workflow.hg38.input.json.py $TUMORBAM $TUMORBAMIND $NORMALBAM $NORMALBAMIND $OUTFILE $INTERVALSPATH $REFPATH $APPPATH $PONPATH`
+The python script can be ran in the following way: `python make.cnv_somatic_pair_workflow.hg38.input.json.py $TUMORBAM $TUMORBAMIND $NORMALBAM $NORMALBAMIND $OUTFILE $INTERVALSPATH $REFPATH $PONPATH`
 
 The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/raw/master/cnv_somatic_pair_workflow.wdl
 
