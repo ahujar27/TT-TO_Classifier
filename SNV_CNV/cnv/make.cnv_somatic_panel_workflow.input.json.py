@@ -5,7 +5,8 @@ normalList = sys.argv[1]
 outName = sys.argv[2]
 refPath = sys.argv[3]
 intervalPath = sys.argv[4]
-appPath = sys.argv[5]
+
+appPath = /opt/gatk-4.4.0.0/
 
 with open(normalList,'r') as fin:
     normBams = fin.readlines()
@@ -22,8 +23,8 @@ jsonDict = {
     "CNVSomaticPanelWorkflow.ref_fasta_dict": "{}/GRCh38.d1.vd1.fa.dict".format(refPath),
     "CNVSomaticPanelWorkflow.intervals": intervalPath,
 
-    "CNVSomaticPanelWorkflow.gatk_docker": "broadinstitute/gatk:4.1.4.0",
-    "CNVSomaticPanelWorkflow.gatk4_jar_override": "{}/gatk-package-4.1.4.1-local.jar".format(appPath),
+    "CNVSomaticPanelWorkflow.gatk_docker": "broadinstitute/gatk:4.4.0.0",
+    "CNVSomaticPanelWorkflow.gatk4_jar_override": "{}/gatk-package-4.4.0.0-local.jar".format(appPath),
     "CNVSomaticPanelWorkflow.preemptible_attempts": "3"
 }
 
