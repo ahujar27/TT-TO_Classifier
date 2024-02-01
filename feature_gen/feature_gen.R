@@ -61,6 +61,10 @@ somatic_df <- mut_mtx[sample_use,]
 write.csv(cpy_df,"CNV_all_tcga.csv")
 write.csv(somatic_df,"somatic_all_tcga.csv")
 
+labels <- somatic_table[,c("sampleId","studyId")]
+labels <- labels[!duplicated(labels$sampleId), ]
+write.csv(labels,"labels_all_tcga.csv")
+                         
 ## compute mutation RMD for each sample
 somatic_table$Chromosome <- sub("^chr", "", somatic_table$Chromosome)
 df_cols = c("Chromosome","Start_Position","Reference_Allele","Variant_Allele","Variant_Classification","Tumor_Sample_Barcode","Hugo_Symbol")
