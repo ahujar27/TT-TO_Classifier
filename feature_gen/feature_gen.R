@@ -58,6 +58,9 @@ sample_use <- unique(intersect(row.names(cpy_mtx),row.names(mut_mtx))) #NEED TO 
 cpy_df <- cpy_mtx[sample_use,]
 somatic_df <- mut_mtx[sample_use,]
 
+write.csv(cpy_df,"CNV_all_tcga.csv")
+write.csv(somatic_df,"somatic_all_tcga.csv")
+
 ## compute mutation RMD for each sample
 somatic_table$Chromosome <- sub("^chr", "", somatic_table$Chromosome)
 df_cols = c("Chromosome","Start_Position","Reference_Allele","Variant_Allele","Variant_Classification","Tumor_Sample_Barcode","Hugo_Symbol")
