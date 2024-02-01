@@ -8,8 +8,9 @@ normalBamInd = sys.argv[4]
 outName = sys.argv[5]
 intervalsPath = sys.argv[6]
 refPath = sys.argv[7]
-appPath = sys.argv[8]
-ponPath = sys.argv[9]
+ponPath = sys.argv[8]
+
+appPath = /opt/gatk-4.4.0/
 
 jsonDict = {
   "CNVSomaticPairWorkflow.tumor_bam": tumorBam,
@@ -24,8 +25,8 @@ jsonDict = {
   "CNVSomaticPairWorkflow.read_count_pon": ponPath, 
   "CNVSomaticPairWorkflow.intervals": intervalsPath,
 
-  "CNVSomaticPairWorkflow.gatk_docker": "broadinstitute/gatk:4.1.4.0",
-  "CNVSomaticPairWorkflow.gatk4_jar_override": "{}/gatk-package-4.1.4.1-local.jar".format(appPath),
+  "CNVSomaticPairWorkflow.gatk_docker": "broadinstitute/gatk:4.4.0.0",
+  "CNVSomaticPairWorkflow.gatk4_jar_override": "{}/gatk-package-4.4.0.0-local.jar".format(appPath),
 
   "CNVSomaticPairWorkflow.is_run_funcotator": "false"
 }
