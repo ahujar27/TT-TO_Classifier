@@ -10,7 +10,7 @@ intervalsPath = sys.argv[6]
 refPath = sys.argv[7]
 ponPath = sys.argv[8]
 
-appPath = /opt/gatk-4.4.0/
+appPath = /opt/gatk-4.4.0.0/
 
 jsonDict = {
   "CNVSomaticPairWorkflow.tumor_bam": tumorBam,
