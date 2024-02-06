@@ -145,8 +145,9 @@ The Dockerfile for this portion is contained in the folder `/feature_gen/`. Addi
 3. GENEPATH (Gene List Path)
 4. BINPATH (Genome Bins Path)
 5. CNVPATH (all_thresholded.by_genes.txt Path)
+6. OUTDIR (output directory where features should be stored)
 
-Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES $GENEPATH $BINPATH $CNVPATH`
+Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES $GENEPATH $BINPATH $CNVPATH $OUTDIR`
 
 ## 5. Model
 
@@ -154,13 +155,14 @@ The Dockerfile for this portion is contained in the folder `/model/`. Additional
 
 1. MODELPATH (Path to model)
 2. GENELIST (List of genes from previous feature generation step)
-3. RMDPATH ()
-4. CNVPATH ()
-5. SNVPATH ()
-6. LABELPATH ()
-7. SBSPATH ()
-8. OUTDIR ()
+3. RMDPATH (Path to RMD from feature generation (from step 4))
+4. CNVPATH (Path to CNV from feature generation (from step 4))
+5. SNVPATH (Path to SNV from feature generation (from step 4))
+6. LABELPATH (Path to labels from feature generation (from step 4))
+7. SBSPATH (Path to SBS from feature generation (from step 4))
+8. PASTPATH (Path to the `tcga_500.csv` file)
+9. OUTDIR (Path to the output directory for predictions to be stored)
 
-Once the docker container is created, the model can be ran using the command 
+Once the docker container is created, the model can be ran using the command: `python model.py $MODELPATH $GENELIST $RMDPATH $CNVPATH $SNVPATH $LABELPATH $SBSPATH $PASTPATH $OUTDIR`
 
 
