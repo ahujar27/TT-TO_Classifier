@@ -150,4 +150,17 @@ Once the docker environment is run, the feature generation script can be run as 
 
 ## 5. Model
 
+The Dockerfile for this portion is contained in the folder `/model/`. Additionally in the folder is the xgboost model, in a JSON format, under `/model/final_model.json`.
+
+1. MODELPATH (Path to model)
+2. GENELIST (List of genes from previous feature generation step)
+3. RMDPATH ()
+4. CNVPATH ()
+5. SNVPATH ()
+6. LABELPATH ()
+7. SBSPATH ()
+8. OUTDIR ()
+
+Once the docker container is created, the model can be ran using the command 
+
 
