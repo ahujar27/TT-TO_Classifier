@@ -1,8 +1,5 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import matplotlib.colors
 import os
 import sys
 
@@ -24,21 +21,21 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.utils import class_weight
 import random
 
-model_path = sys.argv[0]
-gene_list = sys.argv[1]
-rmd_path = sys.argv[2]
-cnv_path = sys.argv[3]
-snv_path = sys.argv[4]
-labels_path = sys.argv[5]
-sbs_path = sys.argv[6]
-past_features = sys.argv[7]
-outdir = sys.argv[8]
+model_path = 'full.model'#sys.argv[0]
+gene_list = '/mnt/z/Active/rohil/final_tto/feature_gen/fullGeneList.txt'#sys.argv[1]
+rmd_path = '/mnt/z/Active/rohil/final_tto/model/tcga-selected/rmd_all_tcga.csv'#sys.argv[2]
+cnv_path = '/mnt/z/Active/rohil/final_tto/model/tcga-selected/CNV_all_tcga.csv'#sys.argv[3]
+snv_path = '/mnt/z/Active/rohil/final_tto/model/tcga-selected/somatic_all_tcga.csv'#sys.argv[4]
+labels_path = '/mnt/z/Active/rohil/final_tto/model/tcga-selected/labels_all_tcga.csv'#sys.argv[5]
+sbs_path = '/mnt/z/Active/rohil/final_tto/model/tcga-selected/sbs_all_tcga.csv'#sys.argv[6]
+past_features = '/mnt/z/Active/rohil/final_tto/model/tcga_500.csv'#sys.argv[7]
+outdir = '/mnt/z/Active/rohil/gatk_test'#sys.argv[8]
 
 xgb_model = xgb.XGBClassifier(colsample_bytree=0.3,gamma=0, learning_rate=0.1,
               max_depth=100, min_child_weight=5, n_estimators=500,subsample = 0.8,objective='multi:softprob')
 xgb_model.load_model('full.model')
 
-genelist = pd.read_csv(gene_list,names=["Genes"], encoding='latin-1')
+genelist = pd.read_csv(gene_list,names=["Genes"], encoding='latin-1', on_bad_lines='skip', lineterminator='\n')
 genelist = genelist.Genes.tolist() 
 rmd = pd.read_csv(rmd_path,index_col=0)
 rmd_df = rmd.T
@@ -61,7 +58,6 @@ sbs = sbs.loc[shared_samples]
 somatic_mtx = somatic_mtx.add_suffix('_mut')
 CNV_mtx = CNV_mtx.add_suffix('_CNV')
 feat_mtx = pd.concat([somatic_mtx,CNV_mtx,rmd_df,sbs], axis=1)
-
 past_feat = pd.read_csv(past_features, index_col = 0)
 
 for column in feat_mtx.columns:
@@ -72,4 +68,4 @@ x = np.array(feat_mtx)
 
 predictions = xgb_model.predict(x)
 
-predictions.to_csv(outdir + 'predictions.csv')
+np.savetxt('predictions.out', predictions, delimiter=',')
