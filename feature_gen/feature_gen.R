@@ -11,6 +11,7 @@ sample_list = args[2]
 geneList_path = args[3]
 gene_bins = args[4]
 cnv_info = args[5]
+outdir = args[6]
 
 fullGeneList = read.csv(geneList_path, header = F)
 
@@ -58,12 +59,12 @@ sample_use <- unique(intersect(row.names(cpy_mtx),row.names(mut_mtx))) #NEED TO 
 cpy_df <- cpy_mtx[sample_use,]
 somatic_df <- mut_mtx[sample_use,]
 
-write.csv(cpy_df,"CNV_all_tcga.csv")
-write.csv(somatic_df,"somatic_all_tcga.csv")
+write.csv(cpy_df, paste(outdir, "CNV_all_tcga.csv", sep = ""))
+write.csv(somatic_df, paste(outdir, "somatic_all_tcga.csv", sep = ""))
 
 labels <- somatic_table[,c("sampleId","studyId")]
 labels <- labels[!duplicated(labels$sampleId), ]
-write.csv(labels,"labels_all_tcga.csv")
+write.csv(labels, paste(outdir, "labels_all_tcga.csv", sep = ""))
                          
 ## compute mutation RMD for each sample
 somatic_table$Chromosome <- sub("^chr", "", somatic_table$Chromosome)
@@ -131,7 +132,7 @@ for (samp in sample_use){
 mt = as.data.frame(mt)
 mt <-mt[!apply(mt, 1, function(row) all(row == 0)),]
 mt <-mt[,!apply(mt, 2, function(col) all(col == 0))]
-write.csv(mt,"rmd_all_tcga.csv")
+write.csv(mt,paste(outdir, "rmd_all_tcga.csv", sep = ""))
 
 ### generate SBS matrix
 df_SBS_cols = c("Chromosome","Start_Position","Reference_Allele","Varinat_Allele","Tumor_Sample_Barcode")
@@ -156,4 +157,4 @@ for (samp in sample_use){
 mt_SBS = as.data.frame(mt_SBS)
 mt_SBS <- mt_SBS[!apply(mt_SBS, 1, function(row) all(row == 0)),]
 mt_SBS <- mt_SBS[,!apply(mt_SBS, 2, function(col) all(col == 0))]
-write.csv(mt_SBS,"sbs_all_tcga.csv")
+write.csv(mt_SBS,paste(outdir, "sbs_all_tcga.csv", sep = ""))
