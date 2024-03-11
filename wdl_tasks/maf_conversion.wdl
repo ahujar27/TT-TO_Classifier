@@ -1,3 +1,5 @@
+version 1.0
+
 # Step 3. [MAF Conversion](https://github.com/ahujar27/TT-TO_Classifier/blob/19667e90d4d1474b83c19865c8c5c033f7c3d28d/README.md?plain=1#L121-L129)
 #
 # The Dockerfile for this portion is contained in the folder `/MAF/`. Build this docker container to run the SNV and the CNV portion of the workflow. Once the docker image is built, activate the conda environment to properly run the workflows: `conda activate gatk`.
@@ -10,30 +12,29 @@
 
 task MafConversion {
 
-    input {
+  File inputVCF
+  String sampleName
+  String ref_fasta = "/opt/references/GRCh38.fa"
+  String vep_path = "/opt/miniconda/envs/gatk/bin"
+  String dockerPath = "MAF/Dockerfile"
 
-        File inputVCF
-        String sampleName
-        String ref_fasta = "/opt/references/GRCh38.fa"
-        String vep_path = "/opt/miniconda/envs/gatk/bin"
-        String dockerPath = "MAF/Dockerfile"
+  command <<<
 
-    }
+    set -e
 
-    command <<<
-        perl /opt/mskcc-vcf2maf-754d68a/vcf2maf.pl \
-            --input-vcf "${inputVCF}" \
-            --output-maf "${dockerPath}.maf" \
-            --ncbi-build GRCh38 \
-            --ref-fasta "${ref_fasta}" \
-            --vep-path "${vep_path}"
-    >>>
+    perl /opt/mskcc-vcf2maf-754d68a/vcf2maf.pl \
+      --input-vcf "${inputVCF}" \
+      --output-maf "${dockerPath}.maf" \
+      --ncbi-build GRCh38 \
+      --ref-fasta "${ref_fasta}" \
+      --vep-path "${vep_path}"
+  >>>
 
-    runtime {
-        docker: "${dockerPath}"
-    }
+  runtime {
+    docker: "${dockerPath}"
+  }
 
-    output {
-        File mafFile = "${dockerPath}.maf"
-    }
+  output {
+    File mafFile = "${dockerPath}.maf"
+  }
 }

@@ -8,7 +8,7 @@ LABEL description="A docker container to run the TUO classifier and prep input d
 
 #Set environmental variables
 ENV WD=/opt \
-DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive
 
 WORKDIR $WD
 ADD . $WD
@@ -16,22 +16,22 @@ ADD . $WD
 
 #Updating ubuntu and installing other necessary software
 RUN apt-get update --yes \
-&& apt-get install --yes gcc python3-dev python3-setuptools ca-certificates curl gnupg lsb-release wget build-essential make libssl-dev zlib1g-dev git python3-pip nodejs unzip rsync r-base r-base-dev \
-&& apt-get clean all
+    && apt-get install --yes gcc python3-dev python3-setuptools ca-certificates curl gnupg lsb-release wget build-essential make libssl-dev zlib1g-dev git python3-pip nodejs unzip rsync r-base r-base-dev \
+    && apt-get clean all
 
 # Add source to install docker via apt-get
 RUN install -m 0755 -d /etc/apt/keyrings \
- && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
- && chmod a+r /etc/apt/keyrings/docker.gpg
-    
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+    && chmod a+r /etc/apt/keyrings/docker.gpg
+
 RUN echo \
- "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
- "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
- tee /etc/apt/sources.list.d/docker.list > /dev/null
+    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+    "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 # Install docker
 RUN apt-get update --yes \
-&& apt-get install --yes docker-ce-cli 
+    && apt-get install --yes docker-ce-cli
 
 # RUN mkdir references
 
@@ -50,7 +50,7 @@ RUN apt-get update --yes \
 # RUN apt-get install --yes apt-transport-https ca-certificates gnupg curl \
 #     && echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
 #     && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-    
+
 # RUN apt-get update && apt-get install google-cloud-cli
 
 # RUN gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf . \
@@ -62,7 +62,7 @@ RUN apt-get update --yes \
 # RUN gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz . \
 # && gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi .
 
-# RUN gsutil cp gs://gatk-test-data/mutect2/Homo_sapiens_assembly38.index_bundle .  
+# RUN gsutil cp gs://gatk-test-data/mutect2/Homo_sapiens_assembly38.index_bundle .
 
 # WORKDIR /opt/
 
@@ -124,14 +124,14 @@ RUN ./gradlew shadowJar
 WORKDIR /opt
 
 RUN wget https://github.com/broadinstitute/gatk/releases/download/4.4.0.0/gatk-4.4.0.0.zip \
-&& unzip gatk-4.4.0.0.zip
+    && unzip gatk-4.4.0.0.zip
 WORKDIR /opt/gatk-4.4.0.0
 
 # WORKDIR /opt
 # #Install Miniconda
-RUN cd $WD && wget https://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-x86_64.sh && bash Miniconda3-4.7.12-Linux-x86_64.sh -b -p $WD/miniconda
+RUN cd $WD && wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-aarch64.sh && bash Miniconda3-py39_4.9.2-Linux-aarch64.sh -b -p $WD/miniconda
 RUN $WD/miniconda/bin/conda init bash
 RUN $WD/miniconda/bin/conda update -n base -c defaults conda
-RUN $WD/miniconda/bin/conda env create -f gatkcondaenv.yml -- verbose
+RUN $WD/miniconda/bin/conda env export -n gatk -f gatkcondaenv.yml
 
 CMD ["/bin/bash"]
