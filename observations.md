@@ -53,29 +53,23 @@ refPath = '/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref'
 
 Therefore those files are missing for the Mutect task:
 
-* gatk_override = "/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/apps/gatk-package-4.1.4.1-local.jar"
-* pon = "/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/1000g_pon.hg38.vcf"
-* pon_idx = "/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/1000g_pon.hg38.vcf.idx"
-* gnomad = "/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/af-only-gnomad.hg38.vcf"
-* gnomad_idx = "/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/af-only-gnomad.hg38.vcf.idx"
-* variants_for_contamination = "/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/small_exac_common_3.hg38.vcf"
-* variants_for_contamination_idx = "/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/small_exac_common_3.hg38.vcf.idx"
-* realignment_index_bundle = "/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/Homo_sapiens_assembly38.index_bundle"
+* gatk_override = `/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/apps/gatk-package-4.1.4.1-local.jar`
+* pon = `/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/1000g_pon.hg38.vcf`
+* pon_idx = `/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/1000g_pon.hg38.vcf.idx`
+* gnomad = `/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/af-only-gnomad.hg38.vcf`
+* gnomad_idx = `/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/af-only-gnomad.hg38.vcf.idx`
+* variants_for_contamination = `/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/small_exac_common_3.hg38.vcf`
+* variants_for_contamination_idx = `/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/small_exac_common_3.hg38.vcf.idx`
+* realignment_index_bundle = `/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/Homo_sapiens_assembly38.index_bundle`
 
 ---
 ## 4. Regarding step: 2e. CNV Panel of Normals Generation
 
-### 4.1. Is the [**NORMALBAMLIST** (List of normal bams to generate the panel of normals)](https://github.com/ahujar27/TT-TO_Classifier/blob/19667e90d4d1474b83c19865c8c5c033f7c3d28d/README.md?plain=1#L93) a list of the [normal BAM files' that should have been created on item 2.c](https://github.com/ahujar27/TT-TO_Classifier/blob/19667e90d4d1474b83c19865c8c5c033f7c3d28d/README.md?plain=1#L71)
-
-* ['normal_BAM_file_1.bam','normal_BAM_file_2.bam']
-* ['normal_BAM_file_1.bam.bai','normal_BAM_file_2.bam.bai']
----
-
-### 4.2. Is a PON going to be build for each sample processing?
+### 4.1. Is a PON going to be build for each sample processing?
 
 ---
-### 4.3 If a sample is tumor-only, does it will go through the CNV Calling step?
-#### 4.3.1 If so, which PON is supposed to be used?
+### 4.2 If a sample is tumor-only, does it will go through the CNV Calling step?
+#### 4.2.1 If so, which PON is supposed to be used?
 
 ---
 ## 5. WDL workflows from the paths described could not get validated through womtools:
@@ -141,7 +135,29 @@ Failed to process workflow definition 'ConvertPairedFastQsToUnmappedBamWf' (reas
 ```
 
 ---
-### 5.4 Global workflow: `somatic-classifier-workflow.wdl`
+### 5.4 `maf_conversion.wdl`
+The workflow copied as described from:
+https://github.com/ahujar27/TT-TO_Classifier/blob/0de949714a4e17ebdf74fd6b1ee6729ee6cdd1ed/README.md?plain=1#L38
+
+In a validation attempt using `Womtools`:
+```bash
+java -jar ../womtool-86.jar validate wdl_tasks/maf_conversion.wdl
+```
+
+Got the following error message:
+```bash
+ERROR: Unexpected symbol (line 16, col 3) when parsing 'setter'.
+
+Expected equal, got "String".
+
+  String sampleName
+  ^
+
+$setter = :equal $e -> $1
+```
+
+---
+### 5.5 Global workflow: `somatic-classifier-workflow.wdl`
 
 Thus, in a validation attempt using `Womtools`:
 ```bash
