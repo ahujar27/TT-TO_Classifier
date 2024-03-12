@@ -6,10 +6,9 @@ tumorBamInd = sys.argv[2]
 normalBam = sys.argv[3]
 normalBamInd = sys.argv[4]
 outName = sys.argv[5]
-
-appPath = '/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/apps'
-intervalsPath = '/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/tso500_intervals.bed'
-refPath = '/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref'
+appPath = sys.argv[6]
+intervalsPath = sys.argv[7]
+refPath = sys.argv[8]
 
 jsonDict = {
   "Mutect2.gatk_docker": "broadinstitute/gatk:4.1.4.1",
