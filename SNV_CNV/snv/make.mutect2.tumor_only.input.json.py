@@ -4,9 +4,10 @@ import sys
 tumorBam = sys.argv[1]
 tumorBamInd = sys.argv[2]
 outName = sys.argv[3]
-appPath = sys.argv[4]
-intervalsPath = sys.argv[5]
-refPath = sys.argv[6]
+intervalsPath = sys.argv[4]
+refPath = sys.argv[5]
+
+appPath = /opt/gatk-4.4.0.0/
 
 jsonDict = {
   "Mutect2.gatk_docker": "broadinstitute/gatk:4.1.4.1",
