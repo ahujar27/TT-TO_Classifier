@@ -72,7 +72,7 @@ This step calls the variants. If a normal and a tumor are both present follow th
 5. NORMALBAMIND (aligned normal index BAI from Step 2c)
 6. OUTDIR (Output Directory)
 7. APPPATH (Path to GATK app)
-8. INTPATH (Path to TSO500 Intervals)
+8. INTPATH (Path to TSO500 Intervals Bed)
 9. REFPATH (Path to references)
 
 To generate SNV the calls, first run the python script `make.mutect2.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `mutect2.wdl` can be run using the JSON.
@@ -84,6 +84,9 @@ The python script can be ran in the following way. `python make.mutect2.input.js
 1. SAMPNAME (sample name)
 2. TUMORBAM (aligned tumor BAM from Step 2c)
 3. TUMORBAMIND (aligned tumor index BAI from Step 2c)
+4. APPPATH (Path to GATK app)
+8. INTPATH (Path to TSO500 Intervals Bed)
+9. REFPATH (Path to references)
 
 To generate SNV the calls, first run the python script `make.mutect2.tumor_only.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `mutect2.wdl` can be run using the JSON.
 
@@ -92,6 +95,8 @@ The python script can be ran in the following way. `python make.mutect2.tumor_on
 The WDL for the tumor-normal and tumor-only are the same, and can be found here: https://raw.githubusercontent.com/broadinstitute/gatk/master/scripts/mutect2_wdl/mutect2.wdl
 
 ### 2e. CNV Panel of Normals Generation
+
+**If you are running the pipeline in Tumor-Only mode, please skip both CNV steps (2e and 2f)**
 
 1. NORMALBAMLIST (List of normal bams to generate the panel of normals)
 2. OUTFILE (The name of the output JSON file)
