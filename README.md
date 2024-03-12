@@ -71,6 +71,9 @@ This step calls the variants. If a normal and a tumor are both present follow th
 4. NORMALBAM (aligned normal BAM from Step 2c)
 5. NORMALBAMIND (aligned normal index BAI from Step 2c)
 6. OUTDIR (Output Directory)
+7. APPPATH (Path to GATK app)
+8. INTPATH (Path to TSO500 Intervals)
+9. REFPATH (Path to references)
 
 To generate SNV the calls, first run the python script `make.mutect2.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `mutect2.wdl` can be run using the JSON.
 
