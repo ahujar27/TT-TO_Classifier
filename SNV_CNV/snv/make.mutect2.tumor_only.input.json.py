@@ -3,13 +3,10 @@ import sys
 
 tumorBam = sys.argv[1]
 tumorBamInd = sys.argv[2]
-# normalBam = sys.argv[3]
-# normalBamInd = sys.argv[4]
 outName = sys.argv[3]
-
-appPath = '/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/apps'
-intervalsPath = '/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/tso500_intervals.bed'
-refPath = '/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref'
+appPath = sys.argv[4]
+intervalsPath = sys.argv[5]
+refPath = sys.argv[6]
 
 jsonDict = {
   "Mutect2.gatk_docker": "broadinstitute/gatk:4.1.4.1",
