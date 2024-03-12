@@ -6,9 +6,10 @@ tumorBamInd = sys.argv[2]
 normalBam = sys.argv[3]
 normalBamInd = sys.argv[4]
 outName = sys.argv[5]
-appPath = sys.argv[6]
-intervalsPath = sys.argv[7]
-refPath = sys.argv[8]
+intervalsPath = sys.argv[6]
+refPath = sys.argv[7]
+
+appPath = /opt/gatk-4.4.0.0/
 
 jsonDict = {
   "Mutect2.gatk_docker": "broadinstitute/gatk:4.1.4.1",
