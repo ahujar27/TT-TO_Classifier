@@ -5,8 +5,7 @@ import sys
 sourceBam = sys.argv[1]
 bamsList = sys.argv[2]
 outName = sys.argv[3]
-
-refPath = '/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref'
+refPath = sys.argv[4]
 
 bam = pysam.AlignmentFile(sourceBam, mode='rb')
 bam_header = dict((k, v) for k, v in bam.header.items())
@@ -28,9 +27,9 @@ jsonDict = {"PreProcessingForVariantDiscovery_GATK4.sample_name": tagDict['SM'],
             "PreProcessingForVariantDiscovery_GATK4.ref_name": "hg38",
             "PreProcessingForVariantDiscovery_GATK4.flowcell_unmapped_bams_list": bamsList,
             "PreProcessingForVariantDiscovery_GATK4.unmapped_bam_suffix": ".bam",
-            "PreProcessingForVariantDiscovery_GATK4.ref_dict": "{}/Homo_sapiens_assembly38.dict".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.ref_fasta": "{}/Homo_sapiens_assembly38.fasta".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.ref_fasta_index": "{}/Homo_sapiens_assembly38.fasta.fai".format(refPath),
+            "PreProcessingForVariantDiscovery_GATK4.ref_dict": "{}/GRCh38.d1.vd1.dict".format(refPath),
+            "PreProcessingForVariantDiscovery_GATK4.ref_fasta": "{}/GRCh38.d1.vd1.fasta".format(refPath),
+            "PreProcessingForVariantDiscovery_GATK4.ref_fasta_index": "{}/GRCh38.d1.vd1.fasta.fai".format(refPath),
             "PreProcessingForVariantDiscovery_GATK4.ref_alt": "{}/Homo_sapiens_assembly38.fasta.64.alt".format(refPath),
             "PreProcessingForVariantDiscovery_GATK4.ref_sa": "{}/Homo_sapiens_assembly38.fasta.64.sa".format(refPath),
             "PreProcessingForVariantDiscovery_GATK4.ref_amb": "{}/Homo_sapiens_assembly38.fasta.64.amb".format(refPath),
