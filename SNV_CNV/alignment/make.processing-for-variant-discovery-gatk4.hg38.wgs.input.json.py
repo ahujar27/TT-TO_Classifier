@@ -5,7 +5,6 @@ import sys
 sourceBam = sys.argv[1]
 bamsList = sys.argv[2]
 outName = sys.argv[3]
-refPath = sys.argv[4]
 
 bam = pysam.AlignmentFile(sourceBam, mode='rb')
 bam_header = dict((k, v) for k, v in bam.header.items())
@@ -27,19 +26,19 @@ jsonDict = {"PreProcessingForVariantDiscovery_GATK4.sample_name": tagDict['SM'],
             "PreProcessingForVariantDiscovery_GATK4.ref_name": "hg38",
             "PreProcessingForVariantDiscovery_GATK4.flowcell_unmapped_bams_list": bamsList,
             "PreProcessingForVariantDiscovery_GATK4.unmapped_bam_suffix": ".bam",
-            "PreProcessingForVariantDiscovery_GATK4.ref_dict": "{}/GRCh38.d1.vd1.dict".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.ref_fasta": "{}/GRCh38.d1.vd1.fasta".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.ref_fasta_index": "{}/GRCh38.d1.vd1.fasta.fai".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.ref_alt": "{}/Homo_sapiens_assembly38.fasta.64.alt".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.ref_sa": "{}/Homo_sapiens_assembly38.fasta.64.sa".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.ref_amb": "{}/Homo_sapiens_assembly38.fasta.64.amb".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.ref_bwt": "{}/Homo_sapiens_assembly38.fasta.64.bwt".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.ref_ann": "{}/Homo_sapiens_assembly38.fasta.64.ann".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.ref_pac": "{}/Homo_sapiens_assembly38.fasta.64.pac".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.dbSNP_vcf": "{}/Homo_sapiens_assembly38.dbsnp138.vcf".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.dbSNP_vcf_index": "{}/Homo_sapiens_assembly38.dbsnp138.vcf.idx".format(refPath),
-            "PreProcessingForVariantDiscovery_GATK4.known_indels_sites_VCFs": ["{}/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz".format(refPath),"{}/Homo_sapiens_assembly38.known_indels.vcf.gz".format(refPath)],
-  "PreProcessingForVariantDiscovery_GATK4.known_indels_sites_indices": ["{}/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi".format(refPath),"{}/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi".format(refPath)]
+            "PreProcessingForVariantDiscovery_GATK4.ref_dict": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dict",
+            "PreProcessingForVariantDiscovery_GATK4.ref_fasta": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta",
+            "PreProcessingForVariantDiscovery_GATK4.ref_fasta_index": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.fai",
+            "PreProcessingForVariantDiscovery_GATK4.ref_alt": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.alt",
+            "PreProcessingForVariantDiscovery_GATK4.ref_sa": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.sa",
+            "PreProcessingForVariantDiscovery_GATK4.ref_amb": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.amb",
+            "PreProcessingForVariantDiscovery_GATK4.ref_bwt": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.bwt",
+            "PreProcessingForVariantDiscovery_GATK4.ref_ann": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.ann",
+            "PreProcessingForVariantDiscovery_GATK4.ref_pac": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.pac",
+            "PreProcessingForVariantDiscovery_GATK4.dbSNP_vcf": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf",
+            "PreProcessingForVariantDiscovery_GATK4.dbSNP_vcf_index": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.idx",
+            "PreProcessingForVariantDiscovery_GATK4.known_indels_sites_VCFs": ["gs://genomics-public-data/resources/broad/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz","gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz"],
+            "PreProcessingForVariantDiscovery_GATK4.known_indels_sites_indices": ["gs://genomics-public-data/resources/broad/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi","gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi"]
 }
 
 with open(outName, 'w') as fout:
