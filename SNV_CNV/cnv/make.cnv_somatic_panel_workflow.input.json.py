@@ -3,10 +3,7 @@ import sys
 
 normalList = sys.argv[1]
 outName = sys.argv[2]
-refPath = sys.argv[3]
-intervalPath = sys.argv[4]
-
-appPath = /opt/gatk-4.4.0.0/
+intervalPath = sys.argv[3]
 
 with open(normalList,'r') as fin:
     normBams = fin.readlines()
@@ -18,13 +15,13 @@ jsonDict = {
     "CNVSomaticPanelWorkflow.normal_bais": normBais,
     "CNVSomaticPanelWorkflow.pon_entity_id": "tuo-cnv-pon",
   
-    "CNVSomaticPanelWorkflow.ref_fasta": "{}/GRCh38.d1.vd1.fa".format(refPath),
-    "CNVSomaticPanelWorkflow.ref_fasta_fai": "{}/GRCh38.d1.vd1.fa.fai".format(refPath),
-    "CNVSomaticPanelWorkflow.ref_fasta_dict": "{}/GRCh38.d1.vd1.fa.dict".format(refPath),
+    "CNVSomaticPanelWorkflow.ref_fasta": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta",
+    "CNVSomaticPanelWorkflow.ref_fasta_fai": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.fai",
+    "CNVSomaticPanelWorkflow.ref_fasta_dict": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dict",
     "CNVSomaticPanelWorkflow.intervals": intervalPath,
 
     "CNVSomaticPanelWorkflow.gatk_docker": "broadinstitute/gatk:4.4.0.0",
-    "CNVSomaticPanelWorkflow.gatk4_jar_override": "{}/gatk-package-4.4.0.0-local.jar".format(appPath),
+    "CNVSomaticPanelWorkflow.gatk4_jar_override": "/opt/gatk-4.4.0.0/gatk-package-4.4.0.0-local.jar".format(appPath),
     "CNVSomaticPanelWorkflow.preemptible_attempts": "3"
 }
 
