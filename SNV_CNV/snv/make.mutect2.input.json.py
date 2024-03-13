@@ -17,8 +17,8 @@ jsonDict = {
   "Mutect2.scatter_count": 50,
   "Mutect2.m2_extra_args": "--downsampling-stride 20 --max-reads-per-alignment-start 6 --max-suspicious-reads-per-alignment-start 6",
 
-  "Mutect2.ref_fasta": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dict",
-  "Mutect2.ref_dict": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta",
+  "Mutect2.ref_fasta": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta",
+  "Mutect2.ref_dict": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dict",
   "Mutect2.ref_fai": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.fai",
   "Mutect2.normal_reads": normalBam,
   "Mutect2.normal_reads_index": normalBamInd,
