@@ -4,21 +4,42 @@ There are 4 different steps required to run the Tumor Type/Tissue of Origin Clas
 
 ## 1. Download the References
 
-The reference files for GRCh38 are required in each individual step of the pre-processing to run the classifier. To download the references, first:
+The reference files for GRCh38 are required in each individual step of the pre-processing to run the classifier. To download the references, first, gsutil needs to be installed. This can be done from the following link: https://cloud.google.com/storage/docs/gsutil_install, selecting your specific operating system.
+
+From there, run the commands:
 
 `mkdir references` and then `cd references`. 
 
-Download the references as such:
+The references can then be downloaded as such:
+
 ```
-wget https://api.gdc.cancer.gov/data/254f697d-310d-4d7d-a27b-27fbf767a834 -O GRCh38.d1.vd1.fa.tar.gz
-tar xf GRCh38.d1.vd1.fa.tar.gz
-rm GRCh38.d1.vd1.fa.tar.gz
-wget https://api.gdc.cancer.gov/data/25217ec9-af07-4a17-8db9-101271ee7225
-tar xf 25217ec9-af07-4a17-8db9-101271ee7225
-rm 25217ec9-af07-4a17-8db9-101271ee7225
-wget https://api.gdc.cancer.gov/data/2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5
-tar xf 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5
-rm 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.fai
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dict
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.alt
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.sa
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.amb
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.bwt
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.ann
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.pac
+```
+Following the download of the references, download the files necessary for SNV calling:
+
+```
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.idx
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz
+gsutil cp gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi
+gsutil cp gs://gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz
+gsutil cp gs://gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz.tbi
+gsutil cp gs://gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz
+gsutil cp gs://gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz.tbi
+gsutil cp gs://gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf.gz
+gsutil cp gs://gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf.gz.tbi
+gsutil cp gs://gatk-test-data/mutect2/Homo_sapiens_assembly38.index_bundle
+
 ```
 
 ## 2. SNV/CNV
