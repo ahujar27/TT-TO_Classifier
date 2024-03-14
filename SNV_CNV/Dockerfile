@@ -47,11 +47,11 @@ RUN apt-get update --yes \
 # && tar xf 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5 \
 # && rm 2c5730fb-0909-4e2a-8a7a-c9a7f8b2dad5
 
-# RUN apt-get install --yes apt-transport-https ca-certificates gnupg curl \
-#     && echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
-#     && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+RUN apt-get install --yes apt-transport-https ca-certificates gnupg curl \
+    && echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
+    && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
 
-# RUN apt-get update && apt-get install google-cloud-cli
+RUN apt-get update && apt-get install google-cloud-cli
 
 # RUN gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf . \
 # && gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.idx .
