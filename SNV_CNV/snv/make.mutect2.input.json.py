@@ -26,11 +26,11 @@ jsonDict = {
   "Mutect2.tumor_reads_index": tumorBamInd,
 
   "Mutect2.pon": "gs://gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz",
-  "Mutect2.pon_idx": "gs://gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.tbi",
-  "Mutect2.gnomad": "gs://gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf",
-  "Mutect2.gnomad_idx": "gs://gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.idx",
-  "Mutect2.variants_for_contamination": "gs://gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf",
-  "Mutect2.variants_for_contamination_idx": "gs://gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf.idx",
+  "Mutect2.pon_idx": "gs://gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz.tbi",
+  "Mutect2.gnomad": "gs://gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz",
+  "Mutect2.gnomad_idx": "gs://gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz.tbi",
+  "Mutect2.variants_for_contamination": "gs://gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf.gz",
+  "Mutect2.variants_for_contamination_idx": "gs://gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf.gz.tbi",
   "Mutect2.realignment_index_bundle": "gs://gatk-test-data/mutect2/Homo_sapiens_assembly38.index_bundle"
 }
 
