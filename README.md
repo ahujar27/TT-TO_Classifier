@@ -72,7 +72,6 @@ This step calls the variants. If a normal and a tumor are both present follow th
 5. NORMALBAMIND (aligned normal index BAI from Step 2c)
 6. OUTDIR (Output Directory)
 7. INTPATH (Path to TSO500 Intervals Bed)
-8. REFPATH (Path to references)
 
 To generate SNV the calls, first run the python script `make.mutect2.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `mutect2.wdl` can be run using the JSON.
 
@@ -84,7 +83,6 @@ The python script can be ran in the following way. `python make.mutect2.input.js
 2. TUMORBAM (aligned tumor BAM from Step 2c)
 3. TUMORBAMIND (aligned tumor index BAI from Step 2c)
 4. INTPATH (Path to TSO500 Intervals Bed)
-5. REFPATH (Path to references)
 
 To generate SNV the calls, first run the python script `make.mutect2.tumor_only.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `mutect2.wdl` can be run using the JSON.
 
@@ -98,8 +96,7 @@ The WDL for the tumor-normal and tumor-only are the same, and can be found here:
 
 1. NORMALBAMLIST (List of normal bams to generate the panel of normals)
 2. OUTFILE (The name of the output JSON file)
-3. REFPATH (Path to all references)
-4. INTERVALSPATH (location of TSO500 intervals file (contained in repository))
+3. INTERVALSPATH (location of TSO500 intervals file (contained in repository))
 
 To generate CNV calls, a panel of normals must first be generated. To generate this, first run the python script `make.cnv_somatic_panel_workflow.input.json.py` to create the JSON necessary for the WDL run. Then the WDL, `cnv_somatic_panel_workflow.wdl` can be run using the JSON.
 
@@ -115,8 +112,7 @@ The WDL can be found at: https://github.com/gatk-workflows/gatk4-somatic-cnvs/ra
 4. NORMALBAMIND (aligned normal index BAI from Step 2c)
 5. OUTFILE (The name of the output JSON file)
 6. INTERVALSPATH (location of TSO500 intervals file (contained in repository))
-7. REFPATH (Path to all references)
-8. PONPATH (Path to PON from previous step)
+7. PONPATH (Path to PON from previous step)
 
 Once the panel of normals is generated, the python script `make.cnv_somatic_pair_workflow.hg38.input.json.py` was ran to create the JSON necessary for the WDL run. Then the WDL, `cnv_somatic_pair_workflow.wdl` can be run using the JSON.
 
