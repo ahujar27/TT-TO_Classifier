@@ -1,0 +1,19 @@
+{
+    "somaticClassifier.sampleName": "",
+    "somaticClassifier.tumourSample": {
+        "unmappedBam": "",
+        "aligned_bam": "",
+        "fastqs1": [],
+        "fastqs2": [],
+        "libraryName": "",
+        "platformUnit": ""
+    },
+    "somaticClassifier.normalSample": {
+        "unmappedBam": "",
+        "aligned_bam": "",
+        "fastqs1": [],
+        "fastqs2": [],
+        "libraryName": "",
+        "platformUnit": ""
+    }
+}
