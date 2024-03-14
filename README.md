@@ -51,13 +51,21 @@ The Dockerfile is contained in the `/SNV_CNV/` folder. Build this docker contain
 ### 2b. Pre-Alignment
 The pre-alignment step converts either an aligned BAM or a paired-end FASTQ file and converts it to an unmapped BAM to be aligned. 
 
-1. SAMPNAME (Sample Name)
-2. SRCBAM (path to the input BAM file, e.g. a tumor or a normal WXS BAM downloaded from TCGA)
+**For FASTQ Start**
+
+1. SRCFQ (path to the input FASTQ file)
+2. SAMPNAME (Sample Name)
 3. OUTDIR (Output Directory)
 
-If the file provided is a FASTQ file, it can be converted to a BAM file using the `paired-fastq-to-unmapped-bam.wdl` workflow. The JSON to run this particular WDL can be created using the python script `make.paired-fastq-to-unmapped-bam.input.json.py`. The WDL can be found at this link: https://raw.githubusercontent.com/gatk-workflows/seq-format-conversion/master/paired-fastq-to-unmapped-bam.wdl
+The provided FASTQ can be converted to a BAM file using the `paired-fastq-to-unmapped-bam.wdl` workflow. The JSON to run this particular WDL can be created using the python script `make.paired-fastq-to-unmapped-bam.input.json.py`. The WDL can be found at this link: https://raw.githubusercontent.com/gatk-workflows/seq-format-conversion/master/paired-fastq-to-unmapped-bam.wdl
 
-The python script can be ran in the following way. `python make.paired-fastq-to-unmapped-bam.input.json.py $SRCBAM $OUTDIR/$SAMPNMAME/ $OUTDIR/$SAMPNAME.bam-to-unmapped-bams.inputs.json`
+The python script can be ran in the following way. `python make.paired-fastq-to-unmapped-bam.input.json.py $SRCFQ $OUTDIR/$SAMPNMAME/ $OUTDIR/$SAMPNAME.bam-to-unmapped-bams.inputs.json`
+
+**For BAM Start**
+
+1. SRCBAM (path to the input BAM file, e.g. a tumor or a normal WXS BAM downloaded from TCGA)
+2. SAMPNAME (Sample Name)
+3. OUTDIR (Output Directory)
 
 If the file provided is an aligned BAM file, the BAM file needs to be unmapped so it can be realigned using the appropriate files. This can be done using the `bam-to-unmapped-bams.wdl`. The JSON to run this particular WDL can be created using the python script `make.bam-to-unmapped-bams.input.json.py`. THe WDL can be found at this link: https://raw.githubusercontent.com/gatk-workflows/seq-format-conversion/master/bam-to-unmapped-bams.wdl
 
