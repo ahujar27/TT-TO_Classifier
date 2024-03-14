@@ -9,7 +9,7 @@ refPath = sys.argv[5]
 
 jsonDict = {
   "Mutect2.gatk_docker": "broadinstitute/gatk:4.1.4.1",
-  "Mutect2.gatk_override": "/opt/gatk-4.4.0.0/gatk-package-4.1.4.1-local.jar".format(appPath),
+  "Mutect2.gatk_override": "/opt/gatk-4.1.4.1/gatk-package-4.1.4.1-local.jar".format(appPath),
 
   "Mutect2.intervals": intervalsPath,
   "Mutect2.scatter_count": 50,
