@@ -6,12 +6,20 @@ library(tidyverse)
 
 args = commandArgs(trailingOnly=TRUE)
 
-indir = args[1]
-sample_list = args[2]
-geneList_path = args[3]
-gene_bins = args[4]
-cnv_info = args[5]
-outdir = args[6]
+if ("-t" %in% args) {
+  indir = args[1]
+  sample_list = args[2]
+  geneList_path = args[3]
+  gene_bins = args[4]
+  outdir = args[5]
+} else {
+  indir = args[1]
+  sample_list = args[2]
+  geneList_path = args[3]
+  gene_bins = args[4]
+  cnv_info = args[5]
+  outdir = args[6]
+}
 
 fullGeneList = read.csv(geneList_path, header = F)
 
@@ -38,29 +46,35 @@ dim(mut_mtx)
 
 #### Generate CNV feature matrix
 
-CNV_table <- data.frame(matrix(ncol = 10, nrow = 0))
-
-CNV_table1 <- read.csv(cnv_info, sep = '\t')
-CNV_table1 <- CNV_table1 %>%
-  pivot_longer(cols = -(1:4), names_to = "Column", values_to = "Value")
-
-### Generate copy number alteration matrix using gistic numbers
-cpy_mtx = dcast(CNV_table1[ ,c('Column', 'Gene.Symbol', 'Value')], Column ~ Gene.Symbol, value.var="Value")
-rownames(cpy_mtx) <- cpy_mtx$sampleId
-cpy_mtx$sampleId <- NULL
-
-## remove rows and columns containing only 0
-cpy_mtx<-cpy_mtx[!apply(cpy_mtx, 1, function(row) all(row == 0)),]
-cpy_mtx<-cpy_mtx[,!apply(cpy_mtx, 2, function(col) all(col == 0))]
 mut_mtx<-mut_mtx[!apply(mut_mtx, 1, function(row) all(row == 0)),]
 mut_mtx<-mut_mtx[,!apply(mut_mtx, 2, function(col) all(col == 0))]
 
-sample_use <- unique(intersect(row.names(cpy_mtx),row.names(mut_mtx))) #NEED TO FILL THIS
-cpy_df <- cpy_mtx[sample_use,]
-somatic_df <- mut_mtx[sample_use,]
+if !("-t" %in% args) {
+  CNV_table <- data.frame(matrix(ncol = 10, nrow = 0))
 
-write.csv(cpy_df, paste(outdir, "CNV_all_tcga.csv", sep = ""))
-write.csv(somatic_df, paste(outdir, "somatic_all_tcga.csv", sep = ""))
+  CNV_table1 <- read.csv(cnv_info, sep = '\t')
+  CNV_table1 <- CNV_table1 %>%
+  pivot_longer(cols = -(1:4), names_to = "Column", values_to = "Value")
+  
+  ### Generate copy number alteration matrix using gistic numbers
+  cpy_mtx = dcast(CNV_table1[ ,c('Column', 'Gene.Symbol', 'Value')], Column ~ Gene.Symbol, value.var="Value")
+  rownames(cpy_mtx) <- cpy_mtx$sampleId
+  cpy_mtx$sampleId <- NULL
+  
+  ## remove rows and columns containing only 0
+  cpy_mtx<-cpy_mtx[!apply(cpy_mtx, 1, function(row) all(row == 0)),]
+  cpy_mtx<-cpy_mtx[,!apply(cpy_mtx, 2, function(col) all(col == 0))]
+  
+  sample_use <- unique(intersect(row.names(cpy_mtx),row.names(mut_mtx))) #NEED TO FILL THIS
+  cpy_df <- cpy_mtx[sample_use,]
+  somatic_df <- mut_mtx[sample_use,]
+  write.csv(cpy_df, paste(outdir, "CNV_all_tcga.csv", sep = ""))
+  write.csv(somatic_df, paste(outdir, "somatic_all_tcga.csv", sep = ""))
+}
+else {
+  sample_use <- row.names(mut_mtx)
+  write.csv(mut_mtx, paste(outdir, "somatic_all_tcga.csv", sep = ""))
+}
 
 labels <- somatic_table[,c("sampleId","studyId")]
 labels <- labels[!duplicated(labels$sampleId), ]
