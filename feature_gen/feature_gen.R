@@ -7,11 +7,11 @@ library(tidyverse)
 args = commandArgs(trailingOnly=TRUE)
 
 if ("-t" %in% args) {
-  indir = args[1]
-  sample_list = args[2]
-  geneList_path = args[3]
-  gene_bins = args[4]
-  outdir = args[5]
+  indir = args[2]
+  sample_list = args[3]
+  geneList_path = args[4]
+  gene_bins = args[5]
+  outdir = args[6]
 } else {
   indir = args[1]
   sample_list = args[2]
