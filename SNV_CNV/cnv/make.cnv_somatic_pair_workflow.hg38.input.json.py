@@ -22,8 +22,8 @@ jsonDict = {
   "CNVSomaticPairWorkflow.read_count_pon": ponPath, 
   "CNVSomaticPairWorkflow.intervals": intervalsPath,
 
-  "CNVSomaticPairWorkflow.gatk_docker": "broadinstitute/gatk:4.4.0.0",
-  "CNVSomaticPairWorkflow.gatk4_jar_override": "/opt/gatk-4.4.0.0/gatk-package-4.4.0.0-local.jar",
+  "CNVSomaticPairWorkflow.gatk_docker": "broadinstitute/gatk:4.1.4.1",
+  "CNVSomaticPairWorkflow.gatk4_jar_override": "/opt/gatk-4.1.4.1/gatk-package-4.1.4.1-local.jar",
 
   "CNVSomaticPairWorkflow.is_run_funcotator": "false"
 }
