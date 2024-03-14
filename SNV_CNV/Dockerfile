@@ -123,9 +123,9 @@ RUN ./gradlew shadowJar
 
 WORKDIR /opt
 
-RUN wget https://github.com/broadinstitute/gatk/releases/download/4.4.0.0/gatk-4.4.0.0.zip \
-    && unzip gatk-4.4.0.0.zip
-WORKDIR /opt/gatk-4.4.0.0
+RUN wget https://github.com/broadinstitute/gatk/releases/download/4.1.4.1/gatk-4.1.4.1.zip \
+    && unzip gatk-4.1.4.1.zip
+WORKDIR /opt/gatk-4.1.4.1
 
 # WORKDIR /opt
 # #Install Miniconda
