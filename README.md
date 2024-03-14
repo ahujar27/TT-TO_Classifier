@@ -170,6 +170,8 @@ Once this is complete, GISTIC2 can be run using the following command: `./gistic
 
 The Dockerfile for this portion is contained in the folder `/feature_gen/`. Additionally in the folder is the feature generation script, at `/feature_gen/feature_gen.R`. 
 
+Once the docker environment is run, there is an option to run the tool in **Tumor-Only** mode.
+
 1. INDIR (Directory containing all SNV/CNV calls)
 2. SAMPNAMES (List of sample names from previous steps)
 3. GENEPATH (Gene List Path)
@@ -177,7 +179,13 @@ The Dockerfile for this portion is contained in the folder `/feature_gen/`. Addi
 5. CNVPATH (all_thresholded.by_genes.txt Path)
 6. OUTDIR (output directory where features should be stored)
 
-Once the docker environment is run, the feature generation script can be run as such: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES $GENEPATH $BINPATH $CNVPATH $OUTDIR`
+**Tumor-Normal**
+
+To run the feature generation script in tumor-normal mode: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES $GENEPATH $BINPATH $CNVPATH $OUTDIR`
+
+**Tumor-Only**
+
+To run the feature generation script in tumor-only mode: `RSCRIPT feature_gen.R -t $INDIR $SAMPNAMES $GENEPATH $BINPATH $OUTDIR
 
 ## 5. Model
 
