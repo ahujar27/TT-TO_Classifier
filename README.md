@@ -39,7 +39,6 @@ gsutil cp gs://gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz.tbi
 gsutil cp gs://gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf.gz
 gsutil cp gs://gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf.gz.tbi
 gsutil cp gs://gatk-test-data/mutect2/Homo_sapiens_assembly38.index_bundle
-
 ```
 
 ## 2. SNV/CNV
