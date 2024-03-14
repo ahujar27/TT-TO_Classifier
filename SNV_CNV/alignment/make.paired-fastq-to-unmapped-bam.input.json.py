@@ -2,11 +2,11 @@ import pysam
 import json
 import sys
 
-sourceBam = sys.argv[1]
+sourceFQ = sys.argv[1]
 fqRoot = sys.argv[2]
 outName = sys.argv[3]
 
-bam = pysam.AlignmentFile(sourceBam, mode='rb')
+bam = pysam.AlignmentFile(sourceFQ, mode='rb')
 bam_header = dict((k, v) for k, v in bam.header.items())
 if type(bam_header['RG'])==list:
     dictRG = bam_header['RG'][0]
