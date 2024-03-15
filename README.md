@@ -205,11 +205,11 @@ Once the docker environment is run, there is an option to run the tool in **Tumo
 
 **Tumor-Normal**
 
-To run the feature generation script of in tumor-normal mode: `python model.py $MODELPATH $GENELIST $RMDPATH $CNVPATH $SNVPATH $LABELPATH $SBSPATH $PASTPATH $OUTDIR`
+To run the model of in tumor-normal mode: `python model.py $MODELPATH $GENELIST $RMDPATH $CNVPATH $SNVPATH $LABELPATH $SBSPATH $PASTPATH $OUTDIR`
 
 **Tumor-Only**
 
-To run the feature generation script in tumor-only mode: `python model.py -t $MODELPATH $GENELIST $RMDPATH $SNVPATH $LABELPATH $SBSPATH $PASTPATH $OUTDIR`
+To run the model in tumor-only mode: `python model.py -t $MODELPATH $GENELIST $RMDPATH $SNVPATH $LABELPATH $SBSPATH $PASTPATH $OUTDIR`
 
 Once the docker container is created, the model can be ran using the command: `python model.py $MODELPATH $GENELIST $RMDPATH $CNVPATH $SNVPATH $LABELPATH $SBSPATH $PASTPATH $OUTDIR`
 
