@@ -15,7 +15,7 @@ ADD . $WD
 
 #Updating ubuntu and installing other necessary software
 RUN apt-get update --yes \
-&& apt-get install --yes ca-certificates curl gnupg lsb-release wget build-essential make libssl-dev zlib1g-dev git python3-pip nodejs unzip rsync r-base r-base-dev libncurses5 lib32z1\
+&& apt-get install --yes ca-certificates curl gnupg lsb-release wget build-essential make libssl-dev zlib1g-dev git python3-pip nodejs unzip rsync r-base r-base-dev libncurses5 libdbi-perl\
 && apt-get clean all
 
 # Add source to install docker via apt-get
@@ -57,19 +57,19 @@ RUN wget https://github.com/broadinstitute/gatk/releases/download/4.4.0.0/gatk-4
 && unzip gatk-4.4.0.0.zip
 WORKDIR gatk-4.4.0.0
 #Install Miniconda
-RUN cd $WD && wget https://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-x86_64.sh && bash Miniconda3-4.7.12-Linux-x86_64.sh -b -p $WD/miniconda
+RUN cd $WD && wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-aarch64.sh && bash Miniconda3-py39_4.9.2-Linux-aarch64.sh -b -p $WD/miniconda
 RUN $WD/miniconda/bin/conda init bash
-RUN $WD/miniconda/bin/conda env create -f gatkcondaenv.yml
-RUN $WD/miniconda/bin/conda install -n gatk -qy -c conda-forge -c bioconda -c defaults ensembl-vep==102.0 htslib==1.10.2 bcftools==1.10.2 samtools==1.10 ucsc-liftover==377
+RUN $WD/miniconda/bin/conda update -n base -c defaults conda
+RUN $WD/miniconda/bin/conda env export -n gatk -f gatkcondaenv.yml
 
 WORKDIR $WD
 
-RUN wget -c ftp://ftp.broadinstitute.org/pub/GISTIC2.0/GISTIC_2_0_23.tar.gz \
-&& tar zxvf GISTIC_2_0_23.tar.gz
+# RUN wget -c ftp://ftp.broadinstitute.org/pub/GISTIC2.0/GISTIC_2_0_23.tar.gz \
+# && tar zxvf GISTIC_2_0_23.tar.gz
 
-RUN cd MCR_Installer && unzip MCRInstaller.zip && ./install -mode silent -agreeToLicense yes -destinationFolder $WD/MATLAB_Compiler_Runtime
+# RUN cd MCR_Installer && unzip MCRInstaller.zip && ./install -mode silent -agreeToLicense yes -destinationFolder $WD/MATLAB_Compiler_Runtime
 
-RUN ./run_gistic_example
+# RUN ./run_gistic_example
 
 WORKDIR $WD
 
