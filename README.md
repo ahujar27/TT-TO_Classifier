@@ -167,8 +167,9 @@ The Dockerfile for this portion is contained in the folder `/MAF/`. Build this d
 1. INVCF (Final Processed VCF)
 2. SAMPNAME (Sample Name)
 3. OUTDIR (Output Directory)
+4. REFDIR (References Directory)
    
-In the docker container, to convert a processed VCF to MAF, run the following command: `perl /opt/mskcc-vcf2maf-754d68a/vcf2maf.pl --input-vcf $INVCF --output-maf $OUTDIR/$SAMPNAME.maf --ncbi-build GRCh38 --ref-fasta /opt/references/GRCh38.fa --vep-path /opt/miniconda/envs/gatk/bin`
+In the docker container, to convert a processed VCF to MAF, run the following command: `perl /opt/mskcc-vcf2maf-754d68a/vcf2maf.pl --input-vcf $INVCF --output-maf $OUTDIR/$SAMPNAME.maf --ncbi-build GRCh38 --ref-fasta $REFDIR/GRCh38.d1.vd1.fa --vep-path /opt/miniconda/envs/gatk/bin --vep-data $REFDIR/GRCh38_vep/.vep/`
 
 ### 3b. GISTIC Conversion 
 
