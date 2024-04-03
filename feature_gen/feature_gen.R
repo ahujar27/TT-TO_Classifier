@@ -3,6 +3,9 @@ library(ggplot2)
 library(dplyr)
 require(reshape2)
 library(tidyverse)
+library(data.table)
+library(BSgenome.Hsapiens.UCSC.hg38)
+#
 
 args = commandArgs(trailingOnly=TRUE)
 
@@ -22,34 +25,66 @@ if ("-t" %in% args) {
 }
 
 fullGeneList = read.csv(geneList_path, header = F)
-
+#fullGeneList = read.csv('/Volumes/jin.zhang/Active/rohil/projects/TT_TO/TT-TO_Classifier/feature_gen/fullGeneList.txt', header = F)
+#indir = '/Volumes/jin.zhang/Active/rohil/projects/TT_TO/maf/output_to/'
 somatic_table <- data.frame(matrix(ncol = 29, nrow = 0))
 
-patient_list = readLines(sample_list)
-
-for (patient_id in patient_list) {
-  maf_path <- paste(indir, patient_id, "/",patient_id, ".maf", sep = '')
-  tmp = read.maf(maf = maf_path)
-  tmp@data <- subset(tmp@data, Hugo_Symbol %in% fullGeneList$V1)
-  tmp@data <- subset(tmp@data, FILTER == "PASS")
-  
-  somatic_table <-rbind(somatic_table,tmp@data)
+#patient_list = readLines(sample_list)
+tmr_list = c('COAD', 'READ', 'LIHC', 'STAD', 'ESCA', 'PAAD')
+file_list <- list()
+i = 1
+for (tumor_type in tmr_list) {
+  subdirectories <- list.dirs(paste(indir, tumor_type, sep = ''), full.names = FALSE, recursive = FALSE)
+  for (subdir in subdirectories) {
+    maf_path <- paste(indir, tumor_type, "/", subdir, "/snv/", subdir, ".filtered.maf", sep = '')
+    file_list[[i]] <- maf_path
+    i = i + 1
+  }
 }
 
-somatic_table <- somatic_table[somatic_table$t_alt_count>5,]
+maf_list = lapply(file_list, function(x) data.table::fread(x))
+remove_ind = list()
+j = 1
+for (i in 1:length(maf_list)) {
+  if (!('Hugo_Symbol' %in% colnames(maf_list[[i]]))) {
+    remove_ind[[j]] <- i
+    j = j+1
+  }
+}
+ 
+for (i in 1:length(remove_ind)) {
+    removing = remove_ind[[i]] - (i-1)
+    maf_list <- maf_list[-removing]
+}
+
+for (i in 1:length(maf_list)) {
+  maf_list[[i]][, 'Tumor_Sample_Barcode' := gsub(".*/([^/]+)/snv/.*", "\\1", file_list[[i]])]
+}
+
+maf = rbindlist(maf_list)
+mafObj = read.maf(maf)
+
+maf <- subset(maf, Variant_Classification %in% unique(mafObj@data$Variant_Classification))
+
+maf <- subset(maf, Hugo_Symbol %in% fullGeneList$V1)
+maf <- subset(maf, FILTER == "PASS")
+class(as.data.frame(maf))
+somatic_table <-rbind(somatic_table,maf)
+
+#somatic_table <- somatic_table[somatic_table$t_alt_count>5,]
 mut_mtx = dcast(somatic_table[ ,c('Tumor_Sample_Barcode', 'Hugo_Symbol')], Tumor_Sample_Barcode ~ Hugo_Symbol, value.var="Hugo_Symbol")
 mut_mtx <- mut_mtx[!is.na(mut_mtx$Tumor_Sample_Barcode),]
 rownames(mut_mtx) <- mut_mtx$Tumor_Sample_Barcode
 mut_mtx$Tumor_Sample_Barcode <- NULL
-mut_mtx <- mut_mtx[rowSums(mut_mtx[])>0,colSums(mut_mtx[])>0]
+#mut_mtx <- mut_mtx[rowSums(mut_mtx)>0,colSums(mut_mtx[])>0]
 dim(mut_mtx)
 
 #### Generate CNV feature matrix
 
-mut_mtx<-mut_mtx[!apply(mut_mtx, 1, function(row) all(row == 0)),]
-mut_mtx<-mut_mtx[,!apply(mut_mtx, 2, function(col) all(col == 0))]
+# mut_mtx<-mut_mtx[!apply(mut_mtx, 1, function(row) all(row == 0)),]
+# mut_mtx<-mut_mtx[,!apply(mut_mtx, 2, function(col) all(col == 0))]
 
-if !("-t" %in% args) {
+if (!("-t" %in% args)) {
   CNV_table <- data.frame(matrix(ncol = 10, nrow = 0))
 
   CNV_table1 <- read.csv(cnv_info, sep = '\t')
@@ -70,24 +105,24 @@ if !("-t" %in% args) {
   somatic_df <- mut_mtx[sample_use,]
   write.csv(cpy_df, paste(outdir, "CNV_all_tcga.csv", sep = ""))
   write.csv(somatic_df, paste(outdir, "somatic_all_tcga.csv", sep = ""))
-}
-else {
+} else {
   sample_use <- row.names(mut_mtx)
   write.csv(mut_mtx, paste(outdir, "somatic_all_tcga.csv", sep = ""))
 }
-
-labels <- somatic_table[,c("sampleId","studyId")]
-labels <- labels[!duplicated(labels$sampleId), ]
-write.csv(labels, paste(outdir, "labels_all_tcga.csv", sep = ""))
+#Rscript feature_gen.R -t /opt/Active/rohil/projects/TT_TO/maf/output_to/ sample_names.txt fullGeneList.txt genome_bins.txt /opt/Active/rohil/projects/TT_TO/features/
+# labels <- somatic_table[,c("sampleId","studyId")]
+# labels <- labels[!duplicated(labels$sampleId), ]
+# write.csv(labels, paste(outdir, "labels_all_tcga.csv", sep = ""))
                          
 ## compute mutation RMD for each sample
 somatic_table$Chromosome <- sub("^chr", "", somatic_table$Chromosome)
-df_cols = c("Chromosome","Start_Position","Reference_Allele","Variant_Allele","Variant_Classification","Tumor_Sample_Barcode","Hugo_Symbol")
-df <- somatic_table[,df_cols]
+df_cols = c("Chromosome","Start_Position","Reference_Allele","Tumor_Seq_Allele2","Variant_Classification","Tumor_Sample_Barcode","Hugo_Symbol")
+df <- somatic_table[,..df_cols]
 colnames(df) <- c("chrom","pos","ref","alt","mut_type","Sample","Gene")
 sample_df <- df %>% group_by(Sample)
 
 ## import annotated bins genome_bin.txt
+#genome_bins <- read.csv("/Volumes/jin.zhang/Active/rohil/projects/TT_TO/TT-TO_Classifier/feature_gen/genome_bins.txt", sep = '\t')
 genome_bins <- read.csv("genome_bins.txt", sep='\t')
 
 genome_bins$chrom[genome_bins$chrom=="X"] <- "23"
@@ -99,7 +134,6 @@ counts <- structure(
   rep(0, nrow(genome_bins)), 
   names=naturalsort::naturalsort(unique(genome_bins$bin_name))
 )
-
 ## use shared samples in Mut and CNV table to generate RMD matrix
 for (samp in sample_use){
   
@@ -129,7 +163,10 @@ for (samp in sample_use){
   n_warn_matches <- sum(match_lengths>1 | match_lengths==0)
   matched_bins[match_lengths==0] <- NA
   tmp_df$bin_name <- sapply(matched_bins,`[[`,1)
-  tab <- table(tmp_df$bin_name[!is.na(tmp_df$bin_name)])
+  if (dim(tmp_df)[1] == 0) {
+    next
+  }
+  tab <- table(tmp_df$bin_name)
   counts[names(tab)] <- tab
   
   ### normalize
@@ -144,13 +181,13 @@ for (samp in sample_use){
 }
 
 mt = as.data.frame(mt)
-mt <-mt[!apply(mt, 1, function(row) all(row == 0)),]
-mt <-mt[,!apply(mt, 2, function(col) all(col == 0))]
+# mt <-mt[!apply(mt, 1, function(row) all(row == 0)),]
+# mt <-mt[,!apply(mt, 2, function(col) all(col == 0))]
 write.csv(mt,paste(outdir, "rmd_all_tcga.csv", sep = ""))
 
 ### generate SBS matrix
-df_SBS_cols = c("Chromosome","Start_Position","Reference_Allele","Varinat_Allele","Tumor_Sample_Barcode")
-df_SBS <- somatic_table[,df_SBS_cols]
+df_SBS_cols = c("Chromosome","Start_Position","Reference_Allele","Tumor_Seq_Allele2","Tumor_Sample_Barcode")
+df_SBS <- somatic_table[,..df_SBS_cols]
 colnames(df_SBS) <- c('chrom','pos','ref','alt','Sample')
 df_SBS$chrom[df_SBS$chrom=="23"] <- "X"
 sample_df_SBS <- df_SBS %>% group_by(Sample)
@@ -162,13 +199,13 @@ for (samp in sample_use){
   
   tmp_df <- sample_df_SBS[sample_df_SBS$Sample==samp,]
   tmp_df <- tmp_df[,c('chrom','pos','ref','alt')]
-  tmp_sbs <- mutSigExtractor::extractSigsSnv(df=tmp_df,  output='contexts', verbose=F)[,1]
+  tmp_sbs <- mutSigExtractor::extractSigsSnv(df=tmp_df,  output='contexts', verbose=F, ref.genome=BSgenome.Hsapiens.UCSC.hg38)[,1] # NEED TO DEBUG THIS
   out_sbs <- as.matrix(tmp_sbs)
   colnames(out_sbs) <- samp
   mt <- cbind(out_sbs,mt)
 }
 
-mt_SBS = as.data.frame(mt_SBS)
-mt_SBS <- mt_SBS[!apply(mt_SBS, 1, function(row) all(row == 0)),]
-mt_SBS <- mt_SBS[,!apply(mt_SBS, 2, function(col) all(col == 0))]
+mt_SBS = as.data.frame(mt)
+# mt_SBS <- mt_SBS[!apply(mt_SBS, 1, function(row) all(row == 0)),]
+# mt_SBS <- mt_SBS[,!apply(mt_SBS, 2, function(col) all(col == 0))]
 write.csv(mt_SBS,paste(outdir, "sbs_all_tcga.csv", sep = ""))
