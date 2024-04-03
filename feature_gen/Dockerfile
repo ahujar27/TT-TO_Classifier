@@ -32,11 +32,21 @@ RUN echo \
 RUN apt-get update --yes \
 && apt-get install --yes docker-ce-cli
 
+RUN R -e "install.packages('naturalsort')"
+
 RUN R -e "install.packages('BiocManager',dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 RUN R -e "install.packages('reshape2',dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 RUN R -e 'BiocManager::install(c("maftools"))'
+
+RUN R -e "BiocManager::install('BSgenome')" ## Install genome parser
+RUN R -e "BiocManager::install('BSgenome.Hsapiens.UCSC.hg38')" ## Install the default genome
+RUN R -e "BiocManager::install('GenomeInfoDb')"
+
+## Install mutSigExtractor directly from github using devtools
+RUN R -e 'install.packages("devtools")'
+RUN R -e "devtools::install_github('https://github.com/UMCUGenetics/mutSigExtractor/')"
 
 RUN R -e "install.packages('tidyverse',dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
