@@ -135,3 +135,4 @@ RUN $WD/miniconda/bin/conda update -n base -c defaults conda
 RUN $WD/miniconda/bin/conda env export -n gatk -f gatkcondaenv.yml
 
 CMD ["/bin/bash"]
+CMD ["conda activate gatk"]
