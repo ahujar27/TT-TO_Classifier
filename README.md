@@ -173,7 +173,9 @@ In the docker container, to convert a processed VCF to MAF, run the following co
 
 ### 3b. GISTIC Conversion 
 
-1. INFILE (Combined CNV calls from step 4a)
+*If running in Tumor-Only mode, skip this step*
+
+1. INFILE (Combined CNV calls from step 2f)
 
 Once this is complete, GISTIC2 can be run using the following command: `./gistic2 -refgene /refgenefiles/hg38.UCSC.add_miR.160920.refgene.mat -cnv $INFILE`
 
