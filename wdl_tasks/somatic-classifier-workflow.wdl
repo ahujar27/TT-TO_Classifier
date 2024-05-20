@@ -58,7 +58,7 @@ workflow somaticClassifier {
         readgroup_name = "tumour" + sampleName,
         library_name = tumourSample.libraryName,
         platform_unit = platformUnit,
-        run_date = "2020-01-01"
+        run_date = run_date
     }
   }
 

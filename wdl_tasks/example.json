@@ -1,5 +1,6 @@
 {
     "somaticClassifier.sampleName": "",
+    "somaticClassifier.run_date": "",
     "somaticClassifier.tumourSample": {
         "unmappedBam": "",
         "aligned_bam": "",
