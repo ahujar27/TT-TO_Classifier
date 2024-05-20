@@ -16,7 +16,7 @@ ADD . $WD
 
 #Updating ubuntu and installing other necessary software
 RUN apt-get update --yes \
-    && apt-get install --yes gcc python3-dev python3-setuptools ca-certificates curl gnupg lsb-release wget build-essential make libssl-dev zlib1g-dev git python3-pip nodejs unzip rsync r-base r-base-dev \
+    && apt-get install --yes gcc python3-dev python3-setuptools ca-certificates curl gnupg lsb-release wget build-essential make libssl-dev zlib1g-dev git-all python3-pip nodejs unzip rsync r-base r-base-dev \
     && apt-get clean all
 
 # Add source to install docker via apt-get
@@ -51,7 +51,7 @@ RUN apt-get install --yes apt-transport-https ca-certificates gnupg curl \
     && echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
     && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
 
-RUN apt-get update && apt-get install google-cloud-cli
+RUN apt-get update && apt-get install google-cloud-cli google-cloud-cli-anthoscli
 
 # RUN gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf . \
 # && gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.idx .

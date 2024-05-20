@@ -57,7 +57,8 @@ workflow somaticClassifier {
         fastq_2 = tumourSample.fastq_2,
         readgroup_name = "tumour" + sampleName,
         library_name = tumourSample.libraryName,
-        platform_unit = platformUnit
+        platform_unit = platformUnit,
+        run_date = "2020-01-01"
     }
   }
 
@@ -186,23 +187,22 @@ workflow somaticClassifier {
         realignment_index_bundle = "/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/Homo_sapiens_assembly38.index_bundle"
     }
 
-    # Will a Panel of Normals be created for each sample processing?
-    call build_cnv_pon.CNVSomaticPanelWorkflow {
-      input:
-        normal_bams = SamplePreProcessing.analysis_ready_bam,
-        normal_bais = SamplePreProcessing.analysis_ready_bam_index,
+    # call build_cnv_pon.CNVSomaticPanelWorkflow {
+    #   input:
+    #     normal_bams = SamplePreProcessing.analysis_ready_bam,
+    #     normal_bais = SamplePreProcessing.analysis_ready_bam_index,
 
-        pon_entity_id = "tuo-cnv-pon",
+    #     pon_entity_id = "tuo-cnv-pon",
 
-        ref_fasta = path + "GRCh38.d1.vd1.fa",
-        ref_fai = path + "GRCh38.d1.vd1.fa.fai",
-        ref_dict = path + "GRCh38.d1.vd1.dict",
-        gatk_docker = "broadinstitute/gatk:4.1.4.1",
-        preemptible_attempts = 3,
+    #     ref_fasta = path + "GRCh38.d1.vd1.fa",
+    #     ref_fai = path + "GRCh38.d1.vd1.fa.fai",
+    #     ref_dict = path + "GRCh38.d1.vd1.dict",
+    #     gatk_docker = "broadinstitute/gatk:4.1.4.1",
+    #     preemptible_attempts = 3,
 
-        # Currently configuring only TSO500 intervals
-        intervals = tso_bed_intervals_file
-    }
+    #     # Currently configuring only TSO500 intervals
+    #     intervals = tso_bed_intervals_file
+    # }
 
     call CNVcalling.CNVSomaticPairWorkflow {
       input:
@@ -266,28 +266,6 @@ workflow somaticClassifier {
         variants_for_contamination_idx = "/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/somatic-hg38/small_exac_common_3.hg38.vcf.idx",
         realignment_index_bundle = "/storage1/fs1/jin.zhang/Active/rohil/gatk_best_practices_test/ref/Homo_sapiens_assembly38.index_bundle"
     }
-
-    # Will a tumor-only sample go through CNVCalling?
-    # Which PON is supposed to be used?
-    #
-    # call CNVcalling.CNVSomaticPairWorkflow {
-    #   input:
-    #
-    #     common_sites = "gs://gatk-test-data/cnv/somatic/common_snps.interval_list"
-    #     intervals = "tso500_intervals.bed"
-    #
-    #     tumor_bam = tumorBam,
-    #     tumor_bam_idx = tumorBamInd,
-    #
-    #     read_count_pon = ?
-    #
-    #     ref_fasta = "path + GRCh38.d1.vd1.fa",
-    #     ref_fai = "path + GRCh38.d1.vd1.fa.fai",
-    #     ref_dict = "path + GRCh38.d1.vd1.dict",
-    #
-    #     gatk_docker = "broadinstitute/gatk:4.4.0.0",
-    #     gatk4_jar_override = "gatk-package-4.4.0.0-local.jar"
-    # }
 
     call MafConversion.MafConversion {
       input:
