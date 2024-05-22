@@ -318,15 +318,15 @@ workflow Mutect2 {
 
 task SplitIntervals {
     input {
-      File? intervals
-      File ref_fasta
-      File ref_fai
-      File ref_dict
-      Int scatter_count
-      String? split_intervals_extra_args
+        File? intervals
+        File ref_fasta
+        File ref_fai
+        File ref_dict
+        Int scatter_count
+        String? split_intervals_extra_args
 
-      # runtime
-      Runtime runtime_params
+        # runtime
+        Runtime runtime_params
     }
 
     command {
@@ -410,7 +410,7 @@ task M2 {
     Int machine_mem = if defined(mem) then mem * 1000 else 3500
     Int command_mem = machine_mem - 500
 
-    parameter_meta{
+    parameter_meta {
         intervals: {localization_optional: true}
         ref_fasta: {localization_optional: true}
         ref_fai: {localization_optional: true}
@@ -522,10 +522,10 @@ task M2 {
 
 task MergeVCFs {
     input {
-      Array[File] input_vcfs
-      Array[File] input_vcf_indices
-      Boolean compress_vcfs
-      Runtime runtime_params
+        Array[File] input_vcfs
+        Array[File] input_vcf_indices
+        Boolean compress_vcfs
+        Runtime runtime_params
     }
 
     String output_vcf = if compress_vcfs then "merged.vcf.gz" else "merged.vcf"
@@ -557,12 +557,12 @@ task MergeVCFs {
 
 task MergeBamOuts {
     input {
-      File ref_fasta
-      File ref_fai
-      File ref_dict
-      Array[File]+ bam_outs
-      Runtime runtime_params
-      Int? disk_space   #override to request more disk than default small task params
+        File ref_fasta
+        File ref_fai
+        File ref_dict
+        Array[File]+ bam_outs
+        Runtime runtime_params
+        Int? disk_space   #override to request more disk than default small task params
     }
 
     command <<<
@@ -600,8 +600,8 @@ task MergeBamOuts {
 
 task MergeStats {
     input {
-      Array[File]+ stats
-      Runtime runtime_params
+        Array[File]+ stats
+        Runtime runtime_params
     }
 
     command {
@@ -630,10 +630,10 @@ task MergeStats {
 
 task MergePileupSummaries {
     input {
-      Array[File] input_tables
-      String output_name
-      File ref_dict
-      Runtime runtime_params
+        Array[File] input_tables
+        String output_name
+        File ref_dict
+        Runtime runtime_params
     }
 
     command {
@@ -664,9 +664,9 @@ task MergePileupSummaries {
 # Learning step of the orientation bias mixture model, which is the recommended orientation bias filter as of September 2018
 task LearnReadOrientationModel {
     input {
-      Array[File] f1r2_tar_gz
-      Runtime runtime_params
-      Int? mem  #override memory
+        Array[File] f1r2_tar_gz
+        Runtime runtime_params
+        Int? mem  #override memory
     }
 
     Int machine_mem = select_first([mem, runtime_params.machine_mem])
@@ -694,15 +694,14 @@ task LearnReadOrientationModel {
     output {
         File artifact_prior_table = "artifact-priors.tar.gz"
     }
-
 }
 
 task CalculateContamination {
     input {
-      String? intervals
-      File tumor_pileups
-      File? normal_pileups
-      Runtime runtime_params
+        String? intervals
+        File tumor_pileups
+        File? normal_pileups
+        Runtime runtime_params
     }
 
     command {
@@ -752,10 +751,10 @@ task Filter {
     String output_vcf = if compress_vcfs then "filtered.vcf.gz" else "filtered.vcf"
     String output_vcf_idx = output_vcf + if compress_vcfs then ".tbi" else ".idx"
 
-    parameter_meta{
-      ref_fasta: {localization_optional: true}
-      ref_fai: {localization_optional: true}
-      ref_dict: {localization_optional: true}
+    parameter_meta {
+        ref_fasta: {localization_optional: true}
+        ref_fai: {localization_optional: true}
+        ref_dict: {localization_optional: true}
     }
 
     command {
@@ -793,19 +792,19 @@ task Filter {
 
 task FilterAlignmentArtifacts {
     input {
-      File ref_fasta
-      File ref_fai
-      File ref_dict
-      File input_vcf
-      File input_vcf_idx
-      File reads
-      File reads_index
-      Boolean compress_vcfs
-      File realignment_index_bundle
-      String? realignment_extra_args
-      String? gcs_project_for_requester_pays
-      Runtime runtime_params
-      Int mem
+        File ref_fasta
+        File ref_fai
+        File ref_dict
+        File input_vcf
+        File input_vcf_idx
+        File reads
+        File reads_index
+        Boolean compress_vcfs
+        File realignment_index_bundle
+        String? realignment_extra_args
+        String? gcs_project_for_requester_pays
+        Runtime runtime_params
+        Int mem
     }
 
     String output_vcf = if compress_vcfs then "filtered.vcf.gz" else "filtered.vcf"
@@ -814,14 +813,14 @@ task FilterAlignmentArtifacts {
     Int machine_mem = mem
     Int command_mem = machine_mem - 500
 
-    parameter_meta{
-      ref_fasta: {localization_optional: true}
-      ref_fai: {localization_optional: true}
-      ref_dict: {localization_optional: true}
-      input_vcf: {localization_optional: true}
-      input_vcf_idx: {localization_optional: true}
-      reads: {localization_optional: true}
-      reads_index: {localization_optional: true}
+    parameter_meta {
+        ref_fasta: {localization_optional: true}
+        ref_fai: {localization_optional: true}
+        ref_dict: {localization_optional: true}
+        input_vcf: {localization_optional: true}
+        input_vcf_idx: {localization_optional: true}
+        reads: {localization_optional: true}
+        reads_index: {localization_optional: true}
     }
 
     command {
