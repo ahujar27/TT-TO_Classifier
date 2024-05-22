@@ -36,7 +36,8 @@ workflow BamToUnmappedBam {
     String gatk_docker = "broadinstitute/gatk:latest"
     String gatk_path = "/gatk/gatk"
   }
-    Float input_size = size(input_bam, "GB")
+
+  Float input_size = size(input_bam, "GB")
 
   call RevertSam {
     input:
@@ -77,7 +78,8 @@ task RevertSam {
     Int machine_mem_gb = 2
     Int preemptible_attempts = 3
   }
-    Int command_mem_gb = machine_mem_gb - 1    ####Needs to occur after machine_mem_gb is set
+
+  Int command_mem_gb = machine_mem_gb - 1    ####Needs to occur after machine_mem_gb is set
 
   command {
 
@@ -114,7 +116,8 @@ task SortSam {
     Int machine_mem_gb = 4
     Int preemptible_attempts = 3
   }
-    Int command_mem_gb = machine_mem_gb - 1    ####Needs to occur after machine_mem_gb is set
+
+  Int command_mem_gb = machine_mem_gb - 1    ####Needs to occur after machine_mem_gb is set
 
   command {
     ~{gatk_path} --java-options "-Xmx~{command_mem_gb}g" \
@@ -124,12 +127,14 @@ task SortSam {
     --SORT_ORDER queryname \
     --MAX_RECORDS_IN_RAM 1000000
   }
+
   runtime {
     docker: docker
     disks: "local-disk " + disk_size + " HDD"
     memory: machine_mem_gb + " GB"
     preemptible: preemptible_attempts
   }
+
   output {
     File sorted_bam = "~{sorted_bam_name}"
   }
