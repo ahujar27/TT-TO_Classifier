@@ -7,6 +7,8 @@ struct SampleInputs {
     String fastqs2
     String library_name
     String platform_unit
+    String sequencing_center
+    String platform_name
 }
 
 struct References {
