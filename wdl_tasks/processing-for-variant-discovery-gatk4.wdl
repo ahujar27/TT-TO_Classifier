@@ -77,9 +77,10 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
 
     Int preemptible_tries = 3
   }
-    String base_file_name = sample_name + "." + ref_name
 
-    Array[File] flowcell_unmapped_bams = read_lines(flowcell_unmapped_bams_list)
+  String base_file_name = sample_name + "." + ref_name
+
+  Array[File] flowcell_unmapped_bams = read_lines(flowcell_unmapped_bams_list)
 
   # Get the version of BWA to include in the PG record in the header of the BAM produced
   # by MergeBamAlignment.
@@ -270,11 +271,13 @@ task GetBwaVersion {
     grep -e '^Version' | \
     sed 's/Version: //'
   }
+
   runtime {
     preemptible: preemptible_tries
     docker: docker_image
     memory: "~{mem_size_gb} GiB"
   }
+
   output {
     String version = read_string(stdout())
   }
@@ -310,6 +313,7 @@ task SamToFastqAndBwaMem {
     String bwa_path
     String gotc_path
   }
+
   Int command_mem_gb = ceil(mem_size_gb/2)
 
   command {
@@ -330,6 +334,7 @@ task SamToFastqAndBwaMem {
     | \
     samtools view -1 - > ~{output_bam_basename}.bam
   }
+
   runtime {
     preemptible: preemptible_tries
     docker: docker_image
@@ -337,6 +342,7 @@ task SamToFastqAndBwaMem {
     cpu: num_cpu
     disks: "local-disk " + disk_size + " HDD"
   }
+
   output {
     File output_bam = "~{output_bam_basename}.bam"
     File bwa_stderr_log = "~{output_bam_basename}.bwa.stderr.log"
@@ -363,6 +369,7 @@ task MergeBamAlignment {
     String docker_image
     String gatk_path
   }
+
   Int command_mem_gb = ceil(mem_size_gb) - 1
 
   command {
@@ -394,12 +401,14 @@ task MergeBamAlignment {
       --ALIGNER_PROPER_PAIR_FLAGS true \
       --UNMAP_CONTAMINANT_READS true
   }
+
   runtime {
     preemptible: preemptible_tries
     docker: docker_image
     memory: "~{mem_size_gb} GiB"
     disks: "local-disk " + disk_size + " HDD"
   }
+
   output {
     File output_bam = "~{output_bam_basename}.bam"
   }
@@ -422,8 +431,9 @@ task SortAndFixTags {
     String docker_image
     String gatk_path
   }
-    Int command_mem_gb_sort = ceil(mem_size_gb) - 1
-    Int command_mem_gb_fix = ceil((mem_size_gb - 1)/10)
+
+  Int command_mem_gb_sort = ceil(mem_size_gb) - 1
+  Int command_mem_gb_fix = ceil((mem_size_gb - 1)/10)
 
   command {
     set -o pipefail
@@ -444,12 +454,14 @@ task SortAndFixTags {
       --CREATE_MD5_FILE true \
       --REFERENCE_SEQUENCE ~{ref_fasta}
   }
+
   runtime {
     preemptible: preemptible_tries
     docker: docker_image
     memory: "~{mem_size_gb} GiB"
     disks: "local-disk " + disk_size + " HDD"
   }
+
   output {
     File output_bam = "~{output_bam_basename}.bam"
     File output_bam_index = "~{output_bam_basename}.bai"
@@ -472,7 +484,8 @@ task MarkDuplicates {
     String docker_image
     String gatk_path
   }
-    Int command_mem_gb = ceil(mem_size_gb) - 2
+
+  Int command_mem_gb = ceil(mem_size_gb) - 2
  # Task is assuming query-sorted input so that the Secondary and Supplementary reads get marked correctly.
  # This works because the output of BWA is query-grouped and therefore, so is the output of MergeBamAlignment.
  # While query-grouped isn't actually query-sorted, it's good enough for MarkDuplicates with ASSUME_SORT_ORDER="queryname"
@@ -487,12 +500,14 @@ task MarkDuplicates {
       --ASSUME_SORT_ORDER "queryname" \
       --CREATE_MD5_FILE true
   }
+
   runtime {
     preemptible: preemptible_tries
     docker: docker_image
     memory: "~{mem_size_gb}  GiB"
     disks: "local-disk " + disk_size + " HDD"
   }
+
   output {
     File output_bam = "~{output_bam_basename}.bam"
     File duplicate_metrics = "~{metrics_filename}"
@@ -501,7 +516,7 @@ task MarkDuplicates {
 
 # Generate sets of intervals for scatter-gathering over chromosomes
 task CreateSequenceGroupingTSV {
- input {
+  input {
     File ref_dict
 
     Int preemptible_tries
@@ -548,11 +563,13 @@ task CreateSequenceGroupingTSV {
       tsv_file_with_unmapped.close()
     CODE
   >>>
+
   runtime {
     preemptible: preemptible_tries
     docker: docker_image
     memory: "~{mem_size_gb} GiB"
   }
+
   output {
     Array[Array[String]] sequence_grouping = read_tsv("sequence_grouping.txt")
     Array[Array[String]] sequence_grouping_with_unmapped = read_tsv("sequence_grouping_with_unmapped.txt")
@@ -594,12 +611,14 @@ task BaseRecalibrator {
       --known-sites ~{sep=" --known-sites " known_indels_sites_VCFs} \
       -L ~{sep=" -L " sequence_group_interval}
   }
+
   runtime {
     preemptible: preemptible_tries
     docker: docker_image
     memory: "~{mem_size_gb} GiB"
     disks: "local-disk " + disk_size + " HDD"
   }
+
   output {
     File recalibration_report = "~{recalibration_report_filename}"
   }
@@ -608,17 +627,18 @@ task BaseRecalibrator {
 # Combine multiple recalibration tables from scattered BaseRecalibrator runs
 # Note that when run from GATK 3.x the tool is not a walker and is invoked differently.
 task GatherBqsrReports {
- input {
-   Array[File] input_bqsr_reports
-   String output_report_filename
+  input {
+    Array[File] input_bqsr_reports
+    String output_report_filename
 
-   Int preemptible_tries
-   Int disk_size
-   Float mem_size_gb = 4
+    Int preemptible_tries
+    Int disk_size
+    Float mem_size_gb = 4
 
-   String docker_image
-   String gatk_path
+    String docker_image
+    String gatk_path
   }
+
   Int command_mem_gb = ceil(mem_size_gb) - 1
 
   command {
@@ -627,12 +647,14 @@ task GatherBqsrReports {
       -I ~{sep=' -I ' input_bqsr_reports} \
       -O ~{output_report_filename}
   }
+
   runtime {
     preemptible: preemptible_tries
     docker: docker_image
     memory: "~{mem_size_gb} GiB"
     disks: "local-disk " + disk_size + " HDD"
   }
+
   output {
     File output_bqsr_report = "~{output_report_filename}"
   }
@@ -657,6 +679,7 @@ task ApplyBQSR {
     String docker_image
     String gatk_path
   }
+
   Int command_mem_gb = ceil(mem_size_gb) - 1
 
   command {
@@ -672,12 +695,14 @@ task ApplyBQSR {
       --create-output-bam-md5 \
       --use-original-qualities
   }
+
   runtime {
     preemptible: preemptible_tries
     docker: docker_image
     memory: "~{mem_size_gb} GiB"
     disks: "local-disk " + disk_size + " HDD"
   }
+
   output {
     File recalibrated_bam = "~{output_bam_basename}.bam"
   }
@@ -697,6 +722,7 @@ task GatherBamFiles {
     String docker_image
     String gatk_path
   }
+
   Int command_mem_gb = ceil(mem_size_gb) - 1
 
   command {
@@ -707,12 +733,14 @@ task GatherBamFiles {
       --CREATE_INDEX true \
       --CREATE_MD5_FILE true
   }
+
   runtime {
     preemptible: preemptible_tries
     docker: docker_image
     memory: "~{mem_size_gb} GiB"
     disks: "local-disk " + disk_size + " HDD"
   }
+
   output {
     File output_bam = "~{output_bam_basename}.bam"
     File output_bam_index = "~{output_bam_basename}.bai"
