@@ -42,9 +42,12 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
     String sample_name
     String fastq_1
     String fastq_2
+    String run_date
     String readgroup_name
     String library_name
     String platform_unit
+    String sequecing_center
+    String platform_name
 
     Boolean make_fofn = false
 
@@ -56,7 +59,7 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
     Float disk_multiplier = 2.5
   }
 
-    String ubam_list_name = sample_name
+  String ubam_list_name = sample_name
 
   # Convert pair of FASTQs to uBAM
   call PairedFastQsToUnmappedBAM {
@@ -68,8 +71,8 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
       library_name = library_name,
       platform_unit = platform_unit,
       run_date = run_date,
-      platform_name = platform_name,
-      sequencing_center = sequencing_center,
+      platform_name = platform_unit,
+      sequencing_center = platform_unit,
       gatk_path = gatk_path,
       docker = gatk_docker,
       disk_multiplier = disk_multiplier
@@ -115,9 +118,11 @@ task PairedFastQsToUnmappedBAM {
     String docker
     Float disk_multiplier
   }
-    Int command_mem_gb = machine_mem_gb - 1
-    Float fastq_size = size(fastq_1, "GB") + size(fastq_2, "GB")
-    Int disk_space_gb = ceil(fastq_size + (fastq_size * disk_multiplier ) + addtional_disk_space_gb)
+
+  Int command_mem_gb = machine_mem_gb - 1
+  Float fastq_size = size(fastq_1, "GB") + size(fastq_2, "GB")
+  Int disk_space_gb = ceil(fastq_size + (fastq_size * disk_multiplier ) + addtional_disk_space_gb)
+
   command {
     ~{gatk_path} --java-options "-Xmx~{command_mem_gb}g" \
     FastqToSam \
@@ -128,12 +133,14 @@ task PairedFastQsToUnmappedBAM {
     --SAMPLE_NAME ~{sample_name} \
     --LIBRARY_NAME ~{library_name}
   }
+
   runtime {
     docker: docker
     memory: machine_mem_gb + " GB"
     disks: "local-disk " + disk_space_gb + " HDD"
     preemptible: preemptible_attempts
   }
+
   output {
     File output_unmapped_bam = "~{readgroup_name}.unmapped.bam"
   }
@@ -148,12 +155,15 @@ task CreateFoFN {
     String ubam
     String fofn_name
   }
+
   command {
     echo ~{ubam} > ~{fofn_name}.list
   }
+
   output {
     File fofn_list = "~{fofn_name}.list"
   }
+
   runtime {
     docker: "ubuntu:latest"
     preemptible: 3
