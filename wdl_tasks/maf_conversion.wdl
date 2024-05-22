@@ -11,12 +11,14 @@ version 1.0
 # In the docker container, to convert a processed VCF to MAF, run the following command: `perl /opt/mskcc-vcf2maf-754d68a/vcf2maf.pl --input-vcf $INVCF --output-maf $OUTDIR/$SAMPNAME.maf --ncbi-build GRCh38 --ref-fasta /opt/references/GRCh38.fa --vep-path /opt/miniconda/envs/gatk/bin`
 
 task MafConversion {
+  input {
+    File inputVCF
+    File ref_fasta
 
-  File inputVCF
-  String sampleName
-  String ref_fasta = "/opt/references/GRCh38.fa"
-  String vep_path = "/opt/miniconda/envs/gatk/bin"
-  String dockerPath = "MAF/Dockerfile"
+    String sampleName
+    String vep_path
+    String dockerPath
+  }
 
   command <<<
 
@@ -35,6 +37,6 @@ task MafConversion {
   }
 
   output {
-    File mafFile = "${dockerPath}.maf"
+    File mafFile = "${sampleName}.maf"
   }
 }
