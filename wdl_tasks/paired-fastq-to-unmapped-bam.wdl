@@ -46,7 +46,7 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
     String readgroup_name
     String library_name
     String platform_unit
-    String sequecing_center
+    String sequencing_center
     String platform_name
 
     Boolean make_fofn = false
@@ -71,8 +71,8 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
       library_name = library_name,
       platform_unit = platform_unit,
       run_date = run_date,
-      platform_name = platform_unit,
-      sequencing_center = platform_unit,
+      platform_name = platform_name,
+      sequencing_center = sequencing_center,
       gatk_path = gatk_path,
       docker = gatk_docker,
       disk_multiplier = disk_multiplier
