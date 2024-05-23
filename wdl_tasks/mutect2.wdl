@@ -69,6 +69,10 @@ struct Runtime {
 
 workflow Mutect2 {
     input {
+        String sample_name
+        String routine
+        String output_dir
+
         # basic inputs
         File? intervals
         File ref_fasta
@@ -105,7 +109,6 @@ workflow Mutect2 {
         Boolean make_m3_test_dataset = false
         File? m3_training_dataset_truth_vcf
         File? m3_training_dataset_truth_vcf_idx
-
 
         # runtime
         String gatk_docker
@@ -146,6 +149,8 @@ workflow Mutect2 {
     Int m2_output_size = tumor_reads_size / scatter_count
     #TODO: do we need to change this disk size now that NIO is always going to happen (for the google backend only)
     Int m2_per_scatter_size = (tumor_reads_size + normal_reads_size) + ref_size + gnomad_vcf_size + m2_output_size + disk_pad
+
+    String output_name = "${output_dir}/${routine}_${sample_name}"
 
     call SplitIntervals {
         input:
@@ -202,6 +207,7 @@ workflow Mutect2 {
         call LearnReadOrientationModel {
             input:
                 f1r2_tar_gz = M2.f1r2_counts,
+                output_name = output_name,
                 runtime_params = standard_runtime,
                 mem = learn_read_orientation_mem
         }
@@ -222,12 +228,18 @@ workflow Mutect2 {
                 ref_fai = ref_fai,
                 ref_dict = ref_dict,
                 bam_outs = M2.output_bamOut,
+                output_name = output_name,
                 runtime_params = standard_runtime,
                 disk_space = ceil(merged_bamout_size * 4) + disk_pad,
         }
     }
 
-    call MergeStats { input: stats = M2.stats, runtime_params = standard_runtime }
+    call MergeStats {
+        input:
+            stats = M2.stats,
+            output_name = output_name,
+            runtime_params = standard_runtime
+        }
 
     if (defined(variants_for_contamination)) {
         call MergePileupSummaries as MergeTumorPileups {
@@ -252,6 +264,7 @@ workflow Mutect2 {
             input:
                 tumor_pileups = MergeTumorPileups.merged_table,
                 normal_pileups = MergeNormalPileups.merged_table,
+                output_name = output_name,
                 runtime_params = standard_runtime
         }
     }
@@ -260,6 +273,7 @@ workflow Mutect2 {
         call Concatenate {
             input:
                 input_files = M2.m3_dataset,
+                output_name = output_name,
                 gatk_docker = gatk_docker
         }
     }
@@ -278,6 +292,7 @@ workflow Mutect2 {
             maf_segments = CalculateContamination.maf_segments,
             artifact_priors_tar_gz = LearnReadOrientationModel.artifact_prior_table,
             m2_extra_filtering_args = m2_extra_filtering_args,
+            output_name = output_name,
             runtime_params = standard_runtime,
             disk_space = ceil(size(MergeVCFs.merged_vcf, "GB") * 4) + disk_pad
     }
@@ -295,6 +310,7 @@ workflow Mutect2 {
                 compress_vcfs = compress_vcfs,
                 input_vcf = Filter.filtered_vcf,
                 input_vcf_idx = Filter.filtered_vcf_idx,
+                output_name = output_name,
                 runtime_params = standard_runtime,
                 mem = filter_alignment_artifacts_mem,
                 gcs_project_for_requester_pays = gcs_project_for_requester_pays
@@ -561,6 +577,7 @@ task MergeBamOuts {
         File ref_fai
         File ref_dict
         Array[File]+ bam_outs
+        String output_name
         Runtime runtime_params
         Int? disk_space   #override to request more disk than default small task params
     }
@@ -592,8 +609,8 @@ task MergeBamOuts {
     }
 
     output {
-        File merged_bam_out = "bamout.bam"
-        File merged_bam_out_index = "bamout.bai"
+        File merged_bam_out = "${output_name}_bamout.bam"
+        File merged_bam_out_index = "${output_name}_bamout.bai"
     }
 }
 
@@ -601,6 +618,7 @@ task MergeBamOuts {
 task MergeStats {
     input {
         Array[File]+ stats
+        String output_name
         Runtime runtime_params
     }
 
@@ -624,7 +642,7 @@ task MergeStats {
     }
 
     output {
-        File merged_stats = "merged.stats"
+        File merged_stats = "${output_name}_merged.stats"
     }
 }
 
@@ -665,6 +683,7 @@ task MergePileupSummaries {
 task LearnReadOrientationModel {
     input {
         Array[File] f1r2_tar_gz
+        String output_name
         Runtime runtime_params
         Int? mem  #override memory
     }
@@ -692,7 +711,7 @@ task LearnReadOrientationModel {
     }
 
     output {
-        File artifact_prior_table = "artifact-priors.tar.gz"
+        File artifact_prior_table = "${output_name}_artifact-priors.tar.gz"
     }
 }
 
@@ -701,6 +720,7 @@ task CalculateContamination {
         String? intervals
         File tumor_pileups
         File? normal_pileups
+        String output_name
         Runtime runtime_params
     }
 
@@ -724,8 +744,8 @@ task CalculateContamination {
     }
 
     output {
-        File contamination_table = "contamination.table"
-        File maf_segments = "segments.table"
+        File contamination_table = "${output_name}_contamination.table"
+        File maf_segments = "${output_name}_segments.table"
     }
 }
 
@@ -743,9 +763,10 @@ task Filter {
         File? contamination_table
         File? maf_segments
         String? m2_extra_filtering_args
-
+        String output_name
         Runtime runtime_params
         Int? disk_space
+
     }
 
     String output_vcf = if compress_vcfs then "filtered.vcf.gz" else "filtered.vcf"
@@ -784,9 +805,9 @@ task Filter {
     }
 
     output {
-        File filtered_vcf = "~{output_vcf}"
-        File filtered_vcf_idx = "~{output_vcf_idx}"
-        File filtering_stats = "filtering.stats"
+        File filtered_vcf = "${output_name}_~{output_vcf}"
+        File filtered_vcf_idx = "${output_name}_~{output_vcf_idx}"
+        File filtering_stats = "${output_name}_filtering.stats"
     }
 }
 
@@ -803,12 +824,13 @@ task FilterAlignmentArtifacts {
         File realignment_index_bundle
         String? realignment_extra_args
         String? gcs_project_for_requester_pays
+        String output_name
         Runtime runtime_params
         Int mem
     }
 
     String output_vcf = if compress_vcfs then "filtered.vcf.gz" else "filtered.vcf"
-    String output_vcf_idx = output_vcf +  if compress_vcfs then ".tbi" else ".idx"
+    String output_vcf_idx = output_vcf + if compress_vcfs then ".tbi" else ".idx"
 
     Int machine_mem = mem
     Int command_mem = machine_mem - 500
@@ -849,8 +871,8 @@ task FilterAlignmentArtifacts {
     }
 
     output {
-        File filtered_vcf = "~{output_vcf}"
-        File filtered_vcf_idx = "~{output_vcf_idx}"
+        File filtered_vcf = "${output_name}_~{output_vcf}"
+        File filtered_vcf_idx = "${output_name}_~{output_vcf_idx}"
     }
 }
 
@@ -859,6 +881,7 @@ task Concatenate {
         Array[File] input_files
         Int? mem
         String gatk_docker
+        String output_name
     }
 
     Int machine_mem = if defined(mem) then mem * 1000 else 7000
@@ -878,6 +901,6 @@ task Concatenate {
     }
 
     output {
-        File concatenated = "output.txt"
+        File concatenated = "${output_name}_output.txt"
     }
 }
