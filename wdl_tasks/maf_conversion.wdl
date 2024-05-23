@@ -15,10 +15,15 @@ task MafConversion {
     File inputVCF
     File ref_fasta
 
-    String sampleName
+    String sample_name
+    String routine
+    String output_dir
+
     String vep_path
     String dockerPath
   }
+
+  String output_name = "${output_dir}/${routine}_${sample_name}"
 
   command <<<
 
@@ -37,6 +42,6 @@ task MafConversion {
   }
 
   output {
-    File mafFile = "${sampleName}.maf"
+    File mafFile = "${output_name}.maf"
   }
 }
