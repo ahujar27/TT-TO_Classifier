@@ -40,6 +40,7 @@ version 1.0
 workflow ConvertPairedFastQsToUnmappedBamWf {
   input {
     String sample_name
+
     String fastq_1
     String fastq_2
     String run_date

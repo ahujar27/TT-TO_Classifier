@@ -1,10 +1,10 @@
 version 1.0
 
-import "paired-fastq-to-unmapped-bam.wdl" as convert_paired_fastqs_to_unmapped_bam
-import "processing-for-variant-discovery-gatk4.wdl" as pre_processing_for_variant_discovery
-import "mutect2.wdl" as mutect2
-import "maf_conversion.wdl" as MafConversion
-import "input_struct.wdl"
+import "somatic_classifier/tasks/paired-fastq-to-unmapped-bam.wdl" as convert_paired_fastqs_to_unmapped_bam
+import "somatic_classifier/tasks/processing-for-variant-discovery-gatk4.wdl" as pre_processing_for_variant_discovery
+import "somatic_classifier/tasks/mutect2.wdl" as mutect2
+import "somatic_classifier/tasks/maf_conversion.wdl" as MafConversion
+import "somatic_classifier/tasks/input_struct.wdl"
 
 workflow somaticClassifier {
   input {

@@ -1,13 +1,15 @@
 {
     "somaticClassifier.SampleInputs": {
         "sample_name": "",
+        "routine": "",
         "run_date": "",
         "fastqs1": "",
         "fastqs2": "",
         "library_name": "",
         "platform_unit": "",
         "sequencing_center": "",
-        "platform_name": ""
+        "platform_name": "",
+        "output_dir": ""
     },
     "somaticClassifier.References": {
         "intervals_path": "../tso500_intervals.bed",

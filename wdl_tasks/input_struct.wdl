@@ -2,6 +2,7 @@ version 1.0
 
 struct SampleInputs {
     String sample_name
+    String routine
     String run_date
     String fastqs1
     String fastqs2
@@ -9,6 +10,7 @@ struct SampleInputs {
     String platform_unit
     String sequencing_center
     String platform_name
+    String output_dir
 }
 
 struct References {
