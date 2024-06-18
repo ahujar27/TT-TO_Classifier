@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:18.04
 
 #When running this image, mount the docker socket so the workflow can launch docker containers from within this container
 #docker run -it -v /var/run/docker.sock:/var/run/docker.sock ubuntu
@@ -65,4 +65,3 @@ RUN $WD/miniconda/bin/conda update -n base -c defaults conda
 RUN $WD/miniconda/bin/conda env export -n gatk -f gatkcondaenv.yml
 
 CMD ["/bin/bash"]
-RUN conda activate gatk
