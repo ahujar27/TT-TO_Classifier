@@ -4,7 +4,7 @@ import "wdl_inputs/tasks/paired-fastq-to-unmapped-bam.wdl" as convert_paired_fas
 import "wdl_inputs/tasks/processing-for-variant-discovery-gatk4.wdl" as pre_processing_for_variant_discovery
 import "wdl_inputs/tasks/mutect2.wdl" as mutect2
 import "wdl_inputs/tasks/maf_conversion.wdl" as MafConversion
-import "wdl_inputs/tasks/input_struct.wdl"
+import "wdl_inputs/structs/input_struct.wdl"
 
 workflow somaticClassifier {
   input {
