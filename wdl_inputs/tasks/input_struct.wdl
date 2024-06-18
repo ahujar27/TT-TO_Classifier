@@ -31,6 +31,15 @@ struct References {
     Array[File] known_indels_sites_indices
 }
 
+struct Fastq2BamInputs {
+    String docker_path
+}
+
+struct PreProcessingInputs {
+    String gatk_docker
+    String gotc_docker
+}
+
 struct Mutect2inputs {
     String gatk_docker_version
     File realignment_index_bundle
@@ -38,5 +47,10 @@ struct Mutect2inputs {
 
 struct MAFinputs {
     String vep_path
+    String docker_path
+}
+
+struct DockerPaths {
+    String paired_fastq_to_unmapped_bam
     String docker_path
 }

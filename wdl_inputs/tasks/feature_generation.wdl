@@ -22,13 +22,14 @@ version 1.0
 # To run the feature generation script in tumor-only mode: `RSCRIPT feature_gen.R -t $INDIR $SAMPNAMES $GENEPATH $BINPATH $OUTDIR`
 
 task FeatureGen {
-
-  String input_dir = "../feature_gen/indir/"
-  File sample_names_files = "../feature_gen/sample_names.txt"
-  File gene_list = "../feature_gen/fullGeneList.txt"
-  File bins_list = "../feature_gen/genome_bins.txt"
-  String output_dir = "../feature_gen/outdir/"
-  String dockerPath = "../feature_gen/"
+  input {
+    String input_dir = "../feature_gen/indir/"
+    File sample_names_files = "../feature_gen/sample_names.txt"
+    File gene_list = "../feature_gen/fullGeneList.txt"
+    File bins_list = "../feature_gen/genome_bins.txt"
+    String output_dir = "../feature_gen/outdir/"
+    String dockerPath = "../feature_gen/"
+  }
 
   command <<<
 

@@ -1,15 +1,17 @@
 version 1.0
 
-import "paired-fastq-to-unmapped-bam.wdl" as convert_paired_fastqs_to_unmapped_bam
-import "processing-for-variant-discovery-gatk4.wdl" as pre_processing_for_variant_discovery
-import "mutect2.wdl" as mutect2
-import "maf_conversion.wdl" as MafConversion
-import "input_struct.wdl"
+import "wdl_inputs/tasks/paired-fastq-to-unmapped-bam.wdl" as convert_paired_fastqs_to_unmapped_bam
+import "wdl_inputs/tasks/processing-for-variant-discovery-gatk4.wdl" as pre_processing_for_variant_discovery
+import "wdl_inputs/tasks/mutect2.wdl" as mutect2
+import "wdl_inputs/tasks/maf_conversion.wdl" as MafConversion
+import "wdl_inputs/tasks/input_struct.wdl"
 
 workflow somaticClassifier {
   input {
     SampleInputs SampleInputs
     References References
+    Fastq2BamInputs Fastq2BamInputs
+    PreProcessingInputs PreProcessingInputs
     Mutect2inputs Mutect2inputs
     MAFinputs MAFinputs
   }
@@ -27,6 +29,7 @@ workflow somaticClassifier {
       platform_name = SampleInputs.platform_name,
       sequencing_center = SampleInputs.sequencing_center,
       run_date = SampleInputs.run_date,
+      gatk_docker = Fastq2BamInputs.docker_path
   }
 
   File flowcell_unmapped_bams_list = select_first([TumourFastq2UnmappedBam.unmapped_bam_list])
@@ -51,7 +54,9 @@ workflow somaticClassifier {
       dbSNP_vcf = References.dbSNP_vcf,
       dbSNP_vcf_index = References.dbSNP_vcf_index,
       known_indels_sites_VCFs = References.known_indels_sites_VCFs,
-      known_indels_sites_indices = References.known_indels_sites_indices
+      known_indels_sites_indices = References.known_indels_sites_indices,
+      gatk_docker = PreProcessingInputs.gatk_docker,
+      gotc_docker = PreProcessingInputs.gotc_docker
   }
 
   # ** Tumour-Only SNV Calling **
@@ -72,8 +77,7 @@ workflow somaticClassifier {
       ref_dict = References.ref_dict,
 
       realignment_index_bundle = Mutect2inputs.realignment_index_bundle,
-      gatk_docker = Mutect2inputs.gatk_docker_version,
-      gatk_override = Mutect2inputs.gatk_docker_version
+      gatk_docker = Mutect2inputs.gatk_docker_version
   }
 
   # ** MAF Conversion **

@@ -28,12 +28,19 @@
         "known_indels_sites_VCFs": ["../references/hg38_references/Homo_sapiens_assembly38.known_indels.vcf.gz"],
         "known_indels_sites_indices": ["../references/hg38_references/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi"]
     },
+    "somaticClassifier.Fastq2BamInputs": {
+        "docker_path": "wdl_inputs/dockerfiles/paired-fastq-to-unmapped-bam/Dockerfile"
+    },
+    "somaticClassifier.PreProcessingInputs": {
+        "gatk_docker": "wdl_inputs/dockerfiles/pre_processing_for_variant_discovery/gatk_docker/Dockerfile",
+        "gotc_docker": "wdl_inputs/dockerfiles/pre_processing_for_variant_discovery/genomes_in_the_cloud_docker/Dockerfile"
+    },
     "somaticClassifier.Mutect2inputs": {
-        "gatk_docker_version": "broadinstitute/gatk:4.1.4.1",
+        "gatk_docker_version": "wdl_inputs/dockerfiles/mutect2/Dockerfile",
         "realignment_index_bundle": "../references/hg38_references/Homo_sapiens_assembly38.index_bundle"
     },
     "somaticClassifier.MAFinputs": {
         "vep_path": "/opt/miniconda/envs/gatk/bin",
-        "docker_path": "../MAF/Dockerfile"
+        "docker_path": "wdl_inputs/dockerfiles/MAF/Dockerfile"
     }
 }

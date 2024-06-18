@@ -52,7 +52,7 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
 
     Boolean make_fofn = false
 
-    String gatk_docker = "broadinstitute/gatk:latest"
+    String gatk_docker
     String gatk_path = "/gatk/gatk"
 
     # Sometimes the output is larger than the input, or a task can spill to disk.
