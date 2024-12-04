@@ -40,7 +40,9 @@ gsutil cp gs://gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf.gz 
 gsutil cp gs://gatk-best-practices/somatic-hg38/small_exac_common_3.hg38.vcf.gz.tbi .
 gsutil cp gs://gatk-test-data/mutect2/Homo_sapiens_assembly38.index_bundle .
 ```
-In addition, for conversion to MAF, the ENSEMBL offline VEP cache will need to be downloaded. This can be done as such:
+
+**OPTIONAL**
+In addition, for conversion to MAF, the ENSEMBL offline VEP cache CAN be downloaded. This can be done as such:
 
 In the `references` directory, run the command `mkdir GRCh38_vep`. After that, `cd GRCh38_vep`. From there:
 
