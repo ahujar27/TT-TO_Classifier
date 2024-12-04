@@ -42,6 +42,7 @@ gsutil cp gs://gatk-test-data/mutect2/Homo_sapiens_assembly38.index_bundle .
 ```
 
 **OPTIONAL**
+
 In addition, for conversion to MAF, the ENSEMBL offline VEP cache CAN be downloaded. This can be done as such:
 
 In the `references` directory, run the command `mkdir GRCh38_vep`. After that, `cd GRCh38_vep`. From there:
