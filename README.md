@@ -182,7 +182,22 @@ In the docker container, to convert a processed VCF to MAF, run the following co
 
 Once this is complete, GISTIC2 can be run using the following command: `./gistic2 -refgene /refgenefiles/hg38.UCSC.add_miR.160920.refgene.mat -cnv $INFILE`
 
-## 4. Feature Generation
+## 4. RNA Quantification
+
+The Dockerfile for this portion is contained in the folder `/RNA/`. There is an additional shell script within this folder that should be run to quantify. 
+
+Once the docker environment is created, the script `rna_quant.sh` should be run, with the following options.
+
+1. TMPDIR (working directory for the script)
+2. Reference (GTF file)
+3. CPUs (number of threads for this operation)
+4. OUTDIR (directory where output will be stored)
+5. SAMPNAME (sample name)
+6. BAMPATH (path to RNA bam)
+
+The command inside the docker container should look as such `./rna_quant.sh $TMPDIR $ref $CPUS $OUTDIR $SAMPNAME $BAMPATH
+
+## 5. Feature Generation
 
 The Dockerfile for this portion is contained in the folder `/feature_gen/`. Additionally in the folder is the feature generation script, at `/feature_gen/feature_gen.R`. 
 
@@ -203,7 +218,7 @@ To run the feature generation script in tumor-normal mode: `RSCRIPT feature_gen.
 
 To run the feature generation script in tumor-only mode: `RSCRIPT feature_gen.R -t $INDIR $SAMPNAMES $GENEPATH $BINPATH $OUTDIR`
 
-## 5. Model
+## 6. Model
 
 The Dockerfile for this portion is contained in the folder `/model/`. Additionally in the folder is the xgboost model, in a JSON format, under `/model/final_model.json`.
 
