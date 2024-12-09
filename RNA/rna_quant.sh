@@ -20,5 +20,3 @@ BAMPATH = $6
          -D 1000 \
          -o $OUTDIR/$SAMPNAME.cnt \
          $BAMPATH
-
-echo 'DONE'
