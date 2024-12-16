@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TMP_DIR = $1
-ref = $STORAGE1/reference/genomes/GRCh37_r75/Homo_sapiens.GRCh37.75.gtf
+ref = $2
 CPUS = $3
 OUTDIR = $4
 SAMPNAME = $5
