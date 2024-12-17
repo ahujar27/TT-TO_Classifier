@@ -29,7 +29,7 @@ fullGeneList = read.csv(geneList_path, header = F)
 #indir = '/Volumes/jin.zhang/Active/rohil/projects/TT_TO/maf/output_to/'
 somatic_table <- data.frame(matrix(ncol = 29, nrow = 0))
 
-#patient_list = readLines(sample_list)
+# Compile All MAF files together for all patients in Cohort
 tmr_list = c('COAD', 'READ', 'LIHC', 'STAD', 'ESCA', 'PAAD')
 file_list <- list()
 i = 1
@@ -60,6 +60,8 @@ for (i in 1:length(remove_ind)) {
 for (i in 1:length(maf_list)) {
   maf_list[[i]][, 'Tumor_Sample_Barcode' := gsub(".*/([^/]+)/snv/.*", "\\1", file_list[[i]])]
 }
+
+#Bind all MAF together and read final compiled maf file
 
 maf = rbindlist(maf_list)
 mafObj = read.maf(maf)
@@ -209,3 +211,7 @@ mt_SBS = as.data.frame(mt)
 # mt_SBS <- mt_SBS[!apply(mt_SBS, 1, function(row) all(row == 0)),]
 # mt_SBS <- mt_SBS[,!apply(mt_SBS, 2, function(col) all(col == 0))]
 write.csv(mt_SBS,paste(outdir, "sbs_all_tcga.csv", sep = ""))
+
+#RNA Section
+
+
