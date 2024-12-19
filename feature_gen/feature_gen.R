@@ -189,7 +189,7 @@ for (samp in sample_use){
 mt = as.data.frame(mt)
 # mt <-mt[!apply(mt, 1, function(row) all(row == 0)),]
 # mt <-mt[,!apply(mt, 2, function(col) all(col == 0))]
-write.csv(mt,paste(outdir, "rmd_all_tcga.csv", sep = ""))
+write.csv(mt,paste(outdir, "rmd_all.csv", sep = ""))
 
 ### generate SBS matrix
 df_SBS_cols = c("Chromosome","Start_Position","Reference_Allele","Tumor_Seq_Allele2","Tumor_Sample_Barcode")
@@ -214,7 +214,7 @@ for (samp in sample_use){
 mt_SBS = as.data.frame(mt)
 # mt_SBS <- mt_SBS[!apply(mt_SBS, 1, function(row) all(row == 0)),]
 # mt_SBS <- mt_SBS[,!apply(mt_SBS, 2, function(col) all(col == 0))]
-write.csv(mt_SBS,paste(outdir, "sbs_all_tcga.csv", sep = ""))
+write.csv(mt_SBS,paste(outdir, "sbs_all.csv", sep = ""))
 
 #RNA Section
 
