@@ -14,14 +14,18 @@ if ("-t" %in% args) {
   sample_list = args[3]
   geneList_path = args[4]
   gene_bins = args[5]
-  outdir = args[6]
+  featureCounts = args[6]
+  mappingPath = args[7]
+  outdir = args[8]
 } else {
   indir = args[1]
   sample_list = args[2]
   geneList_path = args[3]
   gene_bins = args[4]
   cnv_info = args[5]
-  outdir = args[6]
+  featureCounts = args[6]
+  mappingPath = args[7]
+  outdir = args[8]
 }
 
 fullGeneList = read.csv(geneList_path, header = F)
@@ -214,4 +218,34 @@ write.csv(mt_SBS,paste(outdir, "sbs_all_tcga.csv", sep = ""))
 
 #RNA Section
 
+library(data.table)
+
+df <- read.table(featureCounts, sep = '\t', header = 1)
+colnames(df)[ncol(df)] <- "Coverage"
+
+mapping <- read.table(mappingPath, sep = ',', header = 1)
+mapping <- subset(mapping, select = -X)
+
+tso_rna_genes = c('ABL1', 'EGFR', 'FGFR2', 'PAX3', 'AKT3', 'EML4', 'FGFR3', 'MLLT3', 'PAX7',
+                 'ALK', 'ERBB2', 'FGFR4', 'MSH2', 'PDGFRA', 'AR', 'ERG', 'FLI1', 'MYC', 'PDGFRB',
+                 'AXL', 'ESR1', 'FLT1', 'NOTCH1', 'PIK3CA', 'BCL2', 'ETS1', 'FLT3', 'NOTCH2', 'PPARG',
+                 'BRAF', 'ETV1', 'JAK2', 'NOTCH3', 'RAF1','BRCA1', 'ETV4', 'KDR', 'NRG1', 'RET',
+                 'BRCA2', 'ETV5', 'KIF5B', 'NTRK1', 'ROS1','CDK4', 'EWSR1', 'KIT', 'NTRK2', 'RPS6KB1',
+                 'CSF1R', 'FGFR1', 'MET', 'NTRK3', 'TMPRSS2', 'MLL')
+
+merged_df <- merge(df, mapping, by.x = "Geneid", by.y = "ensembl_gene_id")
+
+subset_df <- merged_df[merged_df$hgnc_symbol %in% tso_rna_genes, ]
+
+total_length <- sum(as.numeric(subset_df$Coverage), na.rm = TRUE)
+print(total_length)
+for (i in 1:nrow(subset_df)) {
+  numerator <- (10^9) * subset_df[i, "Coverage"]
+  print(numerator)
+  denominator <- total_length * subset_df[i, "Length"]
+  print(denominator)
+  FPKM <- numerator / denominator
+  print(FPKM)
+  subset_df[i, 'FPKM'] <- FPKM
+}
 
