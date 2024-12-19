@@ -208,15 +208,17 @@ Once the docker environment is run, there is an option to run the tool in **Tumo
 3. GENEPATH (Gene List Path)
 4. BINPATH (Genome Bins Path)
 5. CNVPATH (all_thresholded.by_genes.txt Path)
-6. OUTDIR (output directory where features should be stored)
+6. COUNTSPATH (featureCounts output path)
+7. MAPPINGPATH (ensembl ID to HGNC mapping file path)
+8. OUTDIR (output directory where features should be stored)
 
 **Tumor-Normal**
 
-To run the feature generation script in tumor-normal mode: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES $GENEPATH $BINPATH $CNVPATH $OUTDIR`
+To run the feature generation script in tumor-normal mode: `RSCRIPT feature_gen.R $INDIR $SAMPNAMES $GENEPATH $BINPATH $CNVPATH $COUNTSPATH $MAPPINGPATH $OUTDIR`
 
 **Tumor-Only**
 
-To run the feature generation script in tumor-only mode: `RSCRIPT feature_gen.R -t $INDIR $SAMPNAMES $GENEPATH $BINPATH $OUTDIR`
+To run the feature generation script in tumor-only mode: `RSCRIPT feature_gen.R -t $INDIR $SAMPNAMES $GENEPATH $BINPATH $COUNTSPATH $MAPPINGPATH $OUTDIR`
 
 ## 6. Model
 
