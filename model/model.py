@@ -1,85 +1,82 @@
 import pandas as pd
-import numpy as np
 import os
-import sys
-
-import sklearn
-from sklearn import metrics
-from sklearn.svm import LinearSVC, SVC
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split, cross_val_score, KFold,StratifiedKFold,GridSearchCV,RandomizedSearchCV
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_selection import SelectFromModel,RFE
-from sklearn.decomposition import PCA, NMF
-from sklearn.preprocessing import MinMaxScaler, label_binarize
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import classification_report,confusion_matrix,accuracy_score,roc_curve, auc, top_k_accuracy_score
+import numpy as np
 import xgboost as xgb
-from itertools import cycle
-from xgboost import XGBClassifier
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.utils import class_weight
-import random
+from sklearn.impute import KNNImputer
 
-if "-t" in sys.argv:
-  model_path = sys.argv[1]
-  gene_list = sys.argv[2]
-  rmd_path = sys.argv[3]
-  snv_path = sys.argv[4]
-  labels_path = sys.argv[5]
-  sbs_path = sys.argv[6]
-  past_features = sys.argv[7]
-  outdir = sys.argv[8]
-else:
-  model_path = sys.argv[0]
-  gene_list = sys.argv[1]
-  rmd_path = sys.argv[2]
-  cnv_path = sys.argv[3]
-  snv_path = sys.argv[4]
-  labels_path = sys.argv[5]
-  sbs_path = sys.argv[6]
-  past_features = sys.argv[7]
-  outdir = sys.argv[8]
+model_path = sys.argv[1]
+feature_folder = sys.argv[2]
+past_features = sys.argv[3]
+outdir = sys.argv[4]
 
-xgb_model = xgb.XGBClassifier(colsample_bytree=0.3,gamma=0, learning_rate=0.1,
-              max_depth=100, min_child_weight=5, n_estimators=500,subsample = 0.8,objective='multi:softprob')
-xgb_model.load_model(model_path)
+somatic_all = pd.DataFrame()
+rmd_all = pd.DataFrame()
+sbs_all = pd.DataFrame()
+rna_all = pd.DataFrame()
 
-genelist = pd.read_csv(gene_list,names=["Genes"], encoding='latin-1', on_bad_lines='skip', lineterminator='\n')
-genelist = genelist.Genes.tolist() 
-rmd = pd.read_csv(rmd_path,index_col=0)
-rmd_df = rmd.T
+for file in os.listdir(feature_folder):
+    if 'somatic.csv' in file:
+        samp_df = pd.read_csv(feature_folder + file)
+        samp_df.iloc[0,0] = file
+        samp_df.set_index('Unnamed: 0', inplace = True)
+        samp_df.rename(index={samp_df.index[0]: file[0:8]}, inplace = True)
+        samp_df = samp_df.add_suffix('_mut')
+        samp_df['TMB'] = samp_df.sum(axis = 1) / 2.210733
+        somatic_all = pd.concat([somatic_all, samp_df])
+    if 'rmd_all_tcga.csv' in file:
+        samp_df = pd.read_csv(feature_folder + file)
+        samp_df = samp_df.T
+        samp_df.columns = samp_df.iloc[0]
+        samp_df.drop(samp_df.index[0], inplace = True, axis = 0)
+        samp_df.rename(index={samp_df.index[0]: file[0:8]}, inplace = True)
+        rmd_all = pd.concat([rmd_all, samp_df])
+    if 'sbs_all_tcga.csv' in file:
+        samp_df = pd.read_csv(feature_folder + file)
+        samp_df = samp_df.T
+        samp_df.columns = samp_df.iloc[0]
+        samp_df.drop(samp_df.index[0], inplace = True, axis = 0)
+        samp_df.rename(index={samp_df.index[0]: file[0:8]}, inplace = True)
+        sbs_all = pd.concat([sbs_all, samp_df])
+    if 'rna' in file:
+        samp_df = pd.read_csv(feature_folder + file)
+        samp_df = samp_df[['hgnc_symbol', 'FPKM']]
+        samp_df['hgnc_symbol'] = samp_df['hgnc_symbol'].apply(lambda x: x + '_FPKM')
+        samp_df = samp_df.T
+        samp_df.columns = samp_df.iloc[0]
+        samp_df.drop(samp_df.index[0], inplace = True, axis = 0)
+        samp_df.rename(index={samp_df.index[0]: file[0:8]}, inplace = True)
+        rna_all = pd.concat([rna_all, samp_df])
 
-if "-t" not in sys.argv:
-  CNV_mtx = pd.read_csv(cnv_path,index_col=0)
-  CNV_mtx = CNV_mtx.div(CNV_mtx.max().max(),axis=0)
-  CNV_mtx = CNV_mtx.loc[shared_samples]
-  CNV_mtx = CNV_mtx.add_suffix('_CNV')
-  feat_mtx = pd.concat([somatic_mtx,rmd_df,sbs], axis=1)
-else:
-  feat_mtx = pd.concat([somatic_mtx,CNV_mtx,rmd_df,sbs], axis=1)
-  
-somatic_mtx = pd.read_csv(snv_path, index_col=0)
+feat_mtx = pd.concat([somatic_all, sbs_all, rmd_all, rna_all], axis = 1)
 
-labels = pd.read_csv(labels_path,index_col=0)
-sbs = pd.read_csv(sbs_path,index_col=0)
-sbs = sbs.T
+mapping_df = pd.read_csv(past_features)
+mapping_df.set_index('index', inplace = True)
+mapping_df.drop('Weight', axis = 1, inplace = True)
 
-shared_samples = list(set(sbs.index.tolist()) & set(somatic_mtx.index.tolist()))
-somatic_mtx = somatic_mtx.loc[shared_samples]
-rmd_df = rmd_df.loc[shared_samples]
-sbs = sbs.loc[shared_samples]
+feat_new = pd.DataFrame(columns = mapping_df.columns.tolist())
+feat_new = pd.concat([feat_new, feat_mtx])[feat_new.columns]
+feat_new = feat_new.fillna({col: 0 for col in feat_new.columns if feat_new[col].isna().all()})
 
-somatic_mtx = somatic_mtx.add_suffix('_mut')
+to_run = np.array(feat_new)
+imputer = KNNImputer(n_neighbors=2, weights="uniform")
+to_run = imputer.fit_transform(to_run)
 
-past_feat = pd.read_csv(past_features, index_col = 0)
+params = {'subsample': 0.8,
+ 'reg_lambda': 1,
+ 'reg_alpha': 1,
+ 'objective': 'multi:softprob',
+ 'n_estimators': 500,
+ 'min_child_weight': 1,
+ 'max_depth': 100,
+ 'learning_rate': 0.01,
+ 'gamma': 0.5,
+ 'colsample_bytree': 0.5,
+ 'booster': 'gbtree',
+ 'base_score': 1.2}
 
-for column in feat_mtx.columns:
-    if column not in past_feat.columns:
-        feat_mtx = feat_mtx.drop(column, axis=1)
+xgb_fit = xgb.XGBClassifier(**params)
+xgb_fit.load_model(model_path)
+results = xgb_fit.predict(to_run)
+probs = xgb_fit.predict_proba(to_run)
 
-x = np.array(feat_mtx)
-
-predictions = xgb_model.predict(x)
-
-np.savetxt('predictions.out', predictions, delimiter=',')
+np.savetxt(outdir, results, fmt='%d')
