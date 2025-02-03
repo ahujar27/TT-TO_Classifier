@@ -222,28 +222,15 @@ To run the feature generation script in tumor-only mode: `RSCRIPT feature_gen.R 
 
 ## 6. Model
 
-The Dockerfile for this portion is contained in the folder `/model/`. Additionally in the folder is the xgboost model, in a JSON format, under `/model/final_model.json`.
+The Dockerfile for this portion is contained in the folder `/model/`. Additionally in the folder is the xgboost model, under `/model/tso500_55_rna_only.model`.
 
 Once the docker environment is run, there is an option to run the tool in **Tumor-Only** mode.
 
 1. MODELPATH (Path to model)
-2. GENELIST (List of genes from previous feature generation step)
-3. RMDPATH (Path to RMD from feature generation (from step 4))
-4. CNVPATH (Path to CNV from feature generation (from step 4))
-5. SNVPATH (Path to SNV from feature generation (from step 4))
-6. LABELPATH (Path to labels from feature generation (from step 4))
-7. SBSPATH (Path to SBS from feature generation (from step 4))
-8. PASTPATH (Path to the `tcga_500.csv` file)
-9. OUTDIR (Path to the output directory for predictions to be stored)
+2. FEATUREPATH (Path to folder containing each feature file)
+3. PASTPATH (Path to the `TSO500_featurelist.csv` file)
+4. OUTDIR (Path to the output directory for predictions to be stored)
 
-**Tumor-Normal**
-
-To run the model of in tumor-normal mode: `python model.py $MODELPATH $GENELIST $RMDPATH $CNVPATH $SNVPATH $LABELPATH $SBSPATH $PASTPATH $OUTDIR`
-
-**Tumor-Only**
-
-To run the model in tumor-only mode: `python model.py -t $MODELPATH $GENELIST $RMDPATH $SNVPATH $LABELPATH $SBSPATH $PASTPATH $OUTDIR`
-
-Once the docker container is created, the model can be ran using the command: `python model.py $MODELPATH $GENELIST $RMDPATH $CNVPATH $SNVPATH $LABELPATH $SBSPATH $PASTPATH $OUTDIR`
+To run the model in tumor-only mode: `python model.py $MODELPATH $FEATUREPATH $PASTPATH $OUTDIR`
 
 
