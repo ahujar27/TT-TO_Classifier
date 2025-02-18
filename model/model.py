@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import numpy as np
 import xgboost as xgb
+import sys
 from sklearn.impute import KNNImputer
 
 model_path = sys.argv[1]
