@@ -20,7 +20,7 @@ for file in os.listdir(feature_folder):
         samp_df = pd.read_csv(feature_folder + file)
         samp_df.iloc[0,0] = file
         samp_df.set_index('Unnamed: 0', inplace = True)
-        samp_df.rename(index={samp_df.index[0]: file[0:8]}, inplace = True)
+        samp_df.rename(index={samp_df.index[0]: file.split('_somatic')[0]}, inplace = True)
         samp_df = samp_df.add_suffix('_mut')
         samp_df['TMB'] = samp_df.sum(axis = 1) / 2.210733
         somatic_all = pd.concat([somatic_all, samp_df])
@@ -29,14 +29,14 @@ for file in os.listdir(feature_folder):
         samp_df = samp_df.T
         samp_df.columns = samp_df.iloc[0]
         samp_df.drop(samp_df.index[0], inplace = True, axis = 0)
-        samp_df.rename(index={samp_df.index[0]: file[0:8]}, inplace = True)
+        samp_df.rename(index={samp_df.index[0]: file.split('rmd')[0]}, inplace = True)
         rmd_all = pd.concat([rmd_all, samp_df])
     if 'sbs_all_tcga.csv' in file:
         samp_df = pd.read_csv(feature_folder + file)
         samp_df = samp_df.T
         samp_df.columns = samp_df.iloc[0]
         samp_df.drop(samp_df.index[0], inplace = True, axis = 0)
-        samp_df.rename(index={samp_df.index[0]: file[0:8]}, inplace = True)
+        samp_df.rename(index={samp_df.index[0]: file.split('sbs')[0]}, inplace = True)
         sbs_all = pd.concat([sbs_all, samp_df])
     if 'rna' in file:
         samp_df = pd.read_csv(feature_folder + file)
@@ -45,7 +45,7 @@ for file in os.listdir(feature_folder):
         samp_df = samp_df.T
         samp_df.columns = samp_df.iloc[0]
         samp_df.drop(samp_df.index[0], inplace = True, axis = 0)
-        samp_df.rename(index={samp_df.index[0]: file[0:8]}, inplace = True)
+        samp_df.rename(index={samp_df.index[0]: file.split('-DNA')[0]}, inplace = True)
         rna_all = pd.concat([rna_all, samp_df])
 
 feat_mtx = pd.concat([somatic_all, sbs_all, rmd_all, rna_all], axis = 1)
