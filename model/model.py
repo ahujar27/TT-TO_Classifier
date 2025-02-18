@@ -29,14 +29,14 @@ for file in os.listdir(feature_folder):
         samp_df = samp_df.T
         samp_df.columns = samp_df.iloc[0]
         samp_df.drop(samp_df.index[0], inplace = True, axis = 0)
-        samp_df.rename(index={samp_df.index[0]: file.split('rmd')[0]}, inplace = True)
+        samp_df.rename(index={samp_df.index[0]: file.split('_rmd')[0]}, inplace = True)
         rmd_all = pd.concat([rmd_all, samp_df])
     if 'sbs_all_tcga.csv' in file:
         samp_df = pd.read_csv(feature_folder + file)
         samp_df = samp_df.T
         samp_df.columns = samp_df.iloc[0]
         samp_df.drop(samp_df.index[0], inplace = True, axis = 0)
-        samp_df.rename(index={samp_df.index[0]: file.split('sbs')[0]}, inplace = True)
+        samp_df.rename(index={samp_df.index[0]: file.split('_sbs')[0]}, inplace = True)
         sbs_all = pd.concat([sbs_all, samp_df])
     if 'rna' in file:
         samp_df = pd.read_csv(feature_folder + file)
