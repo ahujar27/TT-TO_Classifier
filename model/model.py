@@ -80,4 +80,4 @@ xgb_fit.load_model(model_path)
 results = xgb_fit.predict(to_run)
 probs = xgb_fit.predict_proba(to_run)
 
-np.savetxt(outdir, results, fmt='%d')
+np.savetxt(outdir/'results.txt', results, fmt='%d')
