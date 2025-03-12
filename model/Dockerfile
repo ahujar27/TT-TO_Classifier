@@ -36,7 +36,7 @@ RUN apt-get update --yes \
 RUN cd $WD && wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && bash Miniconda3-latest-Linux-x86_64.sh -b -p $WD/miniconda
 RUN $WD/miniconda/bin/conda init bash
 RUN $WD/miniconda/bin/conda install -y pip pandas numpy matplotlib seaborn
-RUN $WD/miniconda/bin/pip install 'xgboost==2.0.3'
+RUN $WD/miniconda/bin/pip install 'xgboost==2.0.3' 'scikit-learn==1.4.2'
 #RUN $WD/miniconda/bin/conda install -y -c conda-forge scikit-learn py-xgboost
 
 CMD ["/bin/bash"]
